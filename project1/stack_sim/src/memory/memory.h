@@ -23,6 +23,8 @@ public:
 	static void store(const memory_address& mem_addr, const byte data);
 	static void store(const memory_address& mem_addr, const halfword data);
 	static void store(const memory_address& mem_addr, const word data);
+	//store one memory data into another location
+	static void store(const memory_address& mem_addr_0, const memory_address& mem_addr_1);
 	//load data from address
 	static void* load(const memory_address& mem_addr);
 	//clear all memory

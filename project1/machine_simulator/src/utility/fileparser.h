@@ -27,7 +27,7 @@ public:
 	const std::vector<std::string>& findInstructionAndOperand(const std::string& s) const;
 
 	//has data
-	const bool& isEmpty() { return (m_contents.size() > 0) ? true : false; } 
+	const bool& isEmpty() { return (m_contents.size() > 0) ? false : true; } 
 
 	//determine extension
 	std::string getFileExtension(const std::string& filename) {

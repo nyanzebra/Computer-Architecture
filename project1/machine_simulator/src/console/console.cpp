@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "console.h"
+#include "../stack_machine/stackmachine.h"
 
 #define input_invalid "Invalid command entered. Type help for options."
 
@@ -15,6 +16,8 @@ void Console::printHelp() {
 			  << "help\t\t\t display commands\n"
 			  << "open\t\t\t takes a file argument\n"
 			  << "start\t\t\t will execute file\n"
+			  << "default_dir\t\t\t rob's default directory\n"
+			  << "default_file\t\t\t rob's default file\n"
 			  << "dir\t\t\t takes a directory path argument\n"
 			  << "file\t\t\t will display what file is currently being used\n"
 			  << "quit\t\t\t will exit the program\n"
@@ -69,23 +72,36 @@ void Console::tokenize(const std::string& line) {
 
 // take user command and try to operate on that input
 void Console::parseInput() {
-	std::string _arg0 = m_command[0]; //terminal command all args after are flags or content
+	std::string _arg0, _arg1;
+
+	if (m_command.size() > 0) {
+		_arg0 = m_command[0]; //terminal command all args after are flags or content
+	} else {
+		std::cout << input_invalid << std::endl;
+	}
+
+	if (m_command.size() > 1) {
+		_arg1 = m_command[1];
+
+		std::cout << _arg0 << " " << _arg1 << std::endl;
+	}
 
 	if (_arg0 == "open") {
 		if (m_command.size() > 1) {
-			m_fileparser.readFile(m_command[1]);
+			m_fileparser.readFile(_arg1);
 		} else {
 			std::cout << input_invalid << std::endl;
 		}
 	} else if (_arg0 == "dir") {
-		for (std::string s : m_command) {
-			std::cout<<s<<" "<<std::endl;
-		}
 		if (m_command.size() == 2) {
-			m_fileparser.setDirectory(m_command[1]);
+			m_fileparser.setDirectory(_arg1);
 		} else {
 			std::cout << input_invalid << std::endl;
 		}
+	} else if (_arg0 == "default_dir") {
+		m_fileparser.setDirectory("/home/robert/Desktop/CA_PROJECT1/assembly_code/");
+	} else if (_arg0 == "default_file") {
+		m_fileparser.readFile("stack_sim.s");
 	} else if (_arg0 == "file") {
 		if (m_command.size() == 1) {
 				std::cout << m_fileparser.getFilename() << std::endl;
@@ -94,7 +110,12 @@ void Console::parseInput() {
 			std::cout << input_invalid << std::endl;
 		} 
 	} else if (_arg0 == "start" && !m_fileparser.isEmpty()) {
+		if (_arg1 == "-s" || _arg1 == "--stack") {
+			Stack_Machine sm;
+			sm.execute();
+		} else if (_arg1 == "-a" || _arg1 == "--accum") {
 
+		}
 	} else if (_arg0 == "help") {
 		printHelp();
 	} else if (_arg0 == "quit") {

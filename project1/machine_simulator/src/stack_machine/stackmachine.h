@@ -3,12 +3,10 @@
 #include "../memory/memory.h"
 #include "../utility/types.h"
 
-class Stack_Machine {//TODO: need to fetch main from instructions
+class Stack_Machine : public Memory {//TODO: need to fetch main from instructions
 public:
-	Stack_Machine();
-	~Stack_Machine();
 	
-	byte* getNextInstruction();
+	void getNextInstruction();
 	void* getData(const byte& location);
 
 	void push(const memory_address& value) { m_stack.push_back(value); }
@@ -19,5 +17,7 @@ public:
 	void execute();
 private:
 	std::list<memory_address> m_stack;
+	byte* m_current_instruction;
+	int m_program_counter;
 	int* m_stack_pointer;
 };

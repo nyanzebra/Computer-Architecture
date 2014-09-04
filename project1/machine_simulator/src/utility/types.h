@@ -10,10 +10,10 @@ typedef int word;
 typedef char* asciiz;
 
 //what memory is address and pointer value
-struct memory_address
-{
+struct memory_address {
+	bool data_or_instruction;
 	int address;
-	char* value;
+	char* alias;
 };
 
 #endif

@@ -19,15 +19,17 @@ public:
 	static void store(const halfword data); // store data at end of memory of given size
 	static void store(const word data); // store data at end of memory of given size
 	//store data at certain location can overwrite
-	static void store(const memory_address& mem_addr); //store temp data into this address
-	static void store(const memory_address& mem_addr, const byte* data); //store variable length data
+	static void store(const std::list<byte>& data); //store temp data 
+	static void store(const memory_address& mem_addr, const std::list<byte>& data); //store variable length 
+	static void storeData(const byte* mem_addr, const std::list<byte>& data); //store variable length data
 	//store one memory data into another location
-	static void store(const int& begin, const int& end, const byte* data); // store memory at range begin->end and erase whatever was there before
-	static void store(const memory_address& mem_addr_0, const memory_address& mem_addr_1); //store memory at range of two addresses and erase what was there before
+	static void store(const int& begin, const int& end, const std::list<byte>& data); // store memory at range begin->end and erase whatever was there before
+	static void store(const byte* mem_addr_0, const byte* mem_addr_1); //store memory at range of two addresses and erase what was there before
 	//load data from address
-	static byte* load(memory_address& mem_addr); // load from an address
-	static byte* loadData(const memory_address& location); //load exclusively data
-	static byte* loadInstruction(int& location); //load exclusively instructions
+	static std::list<byte> load(memory_address& mem_addr); // load from an address
+	static std::list<byte> loadData(const byte* location); //load exclusively data
+	static std::list<byte> loadData(const memory_address& location); //load exclusively data
+	static std::list<byte> loadInstruction(int& location); //load exclusively instructions
 	//clear all memory
 	static void clear() { m_memory_data.clear(); m_memory_instruction.clear(); m_addresses.clear(); } // delete everything
 	//erase a segment

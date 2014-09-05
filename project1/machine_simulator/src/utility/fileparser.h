@@ -24,7 +24,7 @@ public:
 	//determine contents
 	void findData();
 	void findInstructions();
-	const std::vector<std::string>& findInstructionAndOperand(const std::string& s) const;
+	const std::vector<std::string> findInstructionAndOperand(const std::string& s) const;
 
 	//has data
 	const bool& isEmpty() { return (m_contents.size() > 0) ? false : true; } 

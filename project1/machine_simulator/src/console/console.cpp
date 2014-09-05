@@ -1,7 +1,16 @@
 #include <iostream>
 
 #include "console.h"
+
 #include "../stack_machine/stackmachine.h"
+
+#ifdef _WIN32
+#define default_dir "C:/Users/Robert/Documents/GitHub/Computer-Architecture/project1/assembly_code/"
+#endif
+#ifdef linux
+#define default_dir "/home/robert/Desktop/CA_PROJECT1/assembly_code/"
+#endif
+#define default_file "stack_sim.s"
 
 #define input_invalid "Invalid command entered. Type help for options."
 
@@ -16,8 +25,7 @@ void Console::printHelp() {
 			  << "help\t\t\t display commands\n"
 			  << "open\t\t\t takes a file argument\n"
 			  << "start\t\t\t will execute file\n"
-			  << "default_dir\t\t\t rob's default directory\n"
-			  << "default_file\t\t\t rob's default file\n"
+			  << "default\t\t\t rob's default directory and file\n"
 			  << "dir\t\t\t takes a directory path argument\n"
 			  << "file\t\t\t will display what file is currently being used\n"
 			  << "quit\t\t\t will exit the program\n"
@@ -82,8 +90,6 @@ void Console::parseInput() {
 
 	if (m_command.size() > 1) {
 		_arg1 = m_command[1];
-
-		std::cout << _arg0 << " " << _arg1 << std::endl;
 	}
 
 	if (_arg0 == "open") {
@@ -98,10 +104,9 @@ void Console::parseInput() {
 		} else {
 			std::cout << input_invalid << std::endl;
 		}
-	} else if (_arg0 == "default_dir") {
-		m_fileparser.setDirectory("/home/robert/Desktop/CA_PROJECT1/assembly_code/");
-	} else if (_arg0 == "default_file") {
-		m_fileparser.readFile("stack_sim.s");
+	} else if (_arg0 == "default") {
+		m_fileparser.setDirectory(default_dir);
+		m_fileparser.readFile(default_file);
 	} else if (_arg0 == "file") {
 		if (m_command.size() == 1) {
 				std::cout << m_fileparser.getFilename() << std::endl;

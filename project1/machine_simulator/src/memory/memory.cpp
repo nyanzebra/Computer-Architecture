@@ -1,10 +1,10 @@
 #include "memory.h"
-#include "../utility/makeconstructs.h"
+#include "../utility/lambdas.h"
 
 //initialize containers
-std::vector<byte> Memory::m_memory_data = makeVector<byte>(max_data_size);
-std::vector<byte> Memory::m_memory_instruction = makeVector<byte>(max_instruction_size);
-std::vector<memory_address> Memory::m_addresses = makeVector<memory_address>(max_address_size);
+std::vector<byte> Memory::m_memory_data = L_makeByteVector(max_data_size);
+std::vector<byte> Memory::m_memory_instruction = L_makeByteVector(max_instruction_size);
+std::vector<memory_address> Memory::m_addresses = L_makeMemoryAddressVector(max_address_size);
 
 //initialize counters
 unsigned int Memory::m_data_counter = 0;
@@ -19,50 +19,50 @@ void Memory::storeData(const std::vector<std::string>& values) {
 	//values format = [variable][type][datum]
 
 	int counter = 0;// 3 options and need to handle it accordingly
-	int type = -1; //help place datum correctly
+	int type = 0; //help place datum correctly
 	bool is_ascii = false;
 	for (std::string s : values) {
 		if (counter == 0) {
-			memory_address mem;
-			mem.address = m_data_counter;
-
-			for (char c : s) {
-				mem.alias += c;
-			}
-
-			m_addresses[m_address_counter++] = mem;
+			memory_address* mem = new memory_address();
+			mem->alias = s;
+			mem->data_or_instruction = true;
+			mem->address = m_data_counter;
+			m_addresses[m_address_counter] = *mem;
+			m_address_counter += 1;
 		} 
 		if (counter == 1) {
-			if (s.find("byte")) {
+			if (s == ".byte") {
 				type = 0;
-				m_data_counter += 1; //move data pointer along to top or back of vector
-			} else if (s.find("halfword")) {
+			} else if (s == ".halfword") {
 				type = 1;
-				m_data_counter += 2;
-			} else if (s.find("word")) {
+			} else if (s == ".word") {
 				type = 2;
-				m_data_counter += 4;
-			} else if (s.find("asciiz")) {
+			} else if (s == ".asciiz") {
 				is_ascii = true;
 			}
 		}
 		if (counter == 2 && !is_ascii) {
 			if (type == 0) {
-				m_memory_data[m_data_counter - 1] = s[0]; //push_back char 
+				m_memory_data[m_data_counter] = s[0]; //push_back char 
+				m_data_counter += 1; //move data pointer along to top or back of vector
 			} else if (type == 1) {
-				m_memory_data[m_data_counter - 2] = s[0]; //push_back char 
+				m_memory_data[m_data_counter] = s[0]; //push_back char 
+				m_data_counter += 2;
 			} else if (type == 2) {
-				m_memory_data[m_data_counter - 4] = (int)s[0]; //push_back char 
+				m_memory_data[m_data_counter] = (int)s[0]; //push_back char 
+				m_data_counter += 4;
 			} 
-			counter = 0; //reset 
-			type = -1;
+			counter = -1; //reset 
+			type = 0;
 		}
 		if (counter == 2 && is_ascii) {
 			for (char c : s) {
-				m_memory_data[m_data_counter++] = c;
+				if (c != '"') {
+					m_memory_data[m_data_counter++] = c;
+				}
 			}
 			is_ascii = false;
-			counter = 0; //reset
+			counter = -1; //reset
 		}
 		counter++;
 	}
@@ -82,6 +82,7 @@ void Memory::storeInstruction(const std::vector<std::string>& instructions) {
 			m_memory_instruction[m_instruction_counter++] = 'u';
 			m_memory_instruction[m_instruction_counter++] = 's';
 			m_memory_instruction[m_instruction_counter++] = 'h';
+			m_memory_instruction[m_instruction_counter++] = '`'; // this is a separator of instructions so if else statements can be avoided
 			++it; // get operand
 			for (char c : *it) {
 				m_memory_instruction[m_instruction_counter++] = c;
@@ -91,6 +92,7 @@ void Memory::storeInstruction(const std::vector<std::string>& instructions) {
 			m_memory_instruction[m_instruction_counter++] = 'p';
 			m_memory_instruction[m_instruction_counter++] = 'o';
 			m_memory_instruction[m_instruction_counter++] = 'p';
+			m_memory_instruction[m_instruction_counter++] = '`'; // this is a separator of instructions so if else statements can be avoided
 			++it; //get operand
 			for (char c : *it) {
 				m_memory_instruction[m_instruction_counter++] = c;
@@ -108,28 +110,58 @@ void Memory::storeInstruction(const std::vector<std::string>& instructions) {
 			m_memory_instruction[m_instruction_counter++] = 't';
 			m_memory_instruction[m_instruction_counter++] = '_'; // this is a separator of instructions so if else statements can be avoided
 		} else if (*it == "prnt") {
-			m_memory_instruction[m_instruction_counter] = 'p';
-			m_memory_instruction[m_instruction_counter] = 'r';
-			m_memory_instruction[m_instruction_counter] = 'n';
-			m_memory_instruction[m_instruction_counter] = 't';
-			m_memory_instruction[m_instruction_counter] = '_'; // this is a separator of instructions so if else statements can be avoided
+			m_memory_instruction[m_instruction_counter++] = 'p';
+			m_memory_instruction[m_instruction_counter++] = 'r';
+			m_memory_instruction[m_instruction_counter++] = 'n';
+			m_memory_instruction[m_instruction_counter++] = 't';
+			m_memory_instruction[m_instruction_counter++] = '_'; // this is a separator of instructions so if else statements can be avoided
 		} else if (*it == "end") {
-			m_memory_instruction[m_instruction_counter] = 'e';
-			m_memory_instruction[m_instruction_counter] = 'n';
-			m_memory_instruction[m_instruction_counter] = 'd';
-			m_memory_instruction[m_instruction_counter] = '_'; // this is a separator of instructions so if else statements can be avoided
+			m_memory_instruction[m_instruction_counter++] = 'e';
+			m_memory_instruction[m_instruction_counter++] = 'n';
+			m_memory_instruction[m_instruction_counter++] = 'd';
+			m_memory_instruction[m_instruction_counter++] = '_'; // this is a separator of instructions so if else statements can be avoided
 		}
 	}
 }
 
-byte* Memory::loadData(const memory_address& mem) {
-	byte* result;
+std::list<byte> Memory::loadData(const byte* mem) {
 	int begin = 0;
 	int end = 0;
 
 	// end -begin is size of object we return change to void* return? then execute data!
 	//calculate size of data
-	for (int i = 0; i < m_addresses.size(); ++i) {
+	for (unsigned int i = 0; i < m_addresses.size(); ++i) {
+		if (m_addresses[i].alias == mem) {
+			begin = m_addresses[i].address;
+			end = m_addresses[i + 1].address;
+			break;
+		}
+	}
+
+	int j = begin;
+	if (end < begin) {
+		while (m_memory_data[j]) {
+			end = j + 1;
+			++j;
+		}
+	}
+
+	//get the data
+	std::list<byte> temp;
+	for (int i = begin; i < end; ++i) {
+		temp.push_back(m_memory_data[i]);
+	}
+	return temp;
+}
+
+std::list<byte> Memory::loadData(const memory_address& mem) {
+	std::list<byte> result;
+	int begin = 0;
+	int end = 0;
+
+	// end -begin is size of object we return change to void* return? then execute data!
+	//calculate size of data
+	for (unsigned int i = 0; i < m_addresses.size(); ++i) {
 		if (m_addresses[i].alias == mem.alias) {
 			begin = m_addresses[i].address;
 			end = m_addresses[i+1].address;
@@ -139,49 +171,95 @@ byte* Memory::loadData(const memory_address& mem) {
 
 	//get the data
 	for (int i = begin; i < end; ++i) {
-		result += m_memory_data[i];
+		result.push_back(m_memory_data[i]);
 	}
-}
 
-byte* Memory::loadInstruction(int& location) {
-	byte* result;
-
-	while (m_memory_instruction[location] != '_') {
-		result += m_memory_instruction[location];
-		location++;
-	}
 	return result;
 }
 
-byte* Memory::load(memory_address& addr) {
+std::list<byte> Memory::loadInstruction(int& location) {
+	std::list<byte> result;
+
+	while (m_memory_instruction[location] != '_') {
+		result.push_back(m_memory_instruction[location]);
+		location++;
+	}
+	location++;
+
+	return result;
+}
+
+std::list<byte> Memory::load(memory_address& addr) {
 	if (addr.data_or_instruction) {
-		loadData(addr);
+		return loadData(addr);
 	} else {
-		loadInstruction(addr.address);
+		return loadInstruction(addr.address);
 	}
 }
 
 void Memory::erase(const int& begin, const int& end) {
 	for (int i = begin; i < end; ++i) {
-		m_memory_data[i] = '?';
+		m_memory_data[i] = '\0';
 	}
 }
 
-void Memory::store(const memory_address& mem_addr) {
-	int begin = mem_addr.address;
+void Memory::store(const std::list<byte>& data) {
+	int begin = m_data_counter + 4;
+	int end = begin + data.size();
+	m_data_counter += data.size();
+	memory_address mem;
+	mem.alias = "temp";
+	mem.address = begin;
+	mem.data_or_instruction = true;
+	m_addresses[m_address_counter] = mem;
+	m_address_counter++;
+	store(begin, end, data);
 }
 
-void Memory::store(const int& begin, const int& end, const byte* data) {
+void Memory::store(const byte* mem_addr0, const byte* mem_addr1) {
+	int begin = 0;
+	int end = 0;
+	std::list<byte> data;
+	for (unsigned int i = 0; i < m_addresses.size(); ++i) {
+		if (m_addresses[i].alias == mem_addr0) {
+			begin = m_addresses[i].address;
+		}
+		if (m_addresses[i].alias == mem_addr1) {
+			end = m_addresses[i].address;
+		}
+	}
+
 	for (int i = begin; i < end; ++i) {
-		m_memory_data[i] = data[i];
+		data.push_back(m_memory_data[i]);
+	}
+
+	store(begin, end, data);
+}
+
+void Memory::store(const int& begin, const int& end, const std::list<byte>& data) {
+	if (begin == end) {
+		return;
+	}
+
+	int size = data.size();
+	std::string s = L_listToString(data);
+	int pchar = 0;
+
+	for (int i = begin; i < begin + size; ++i) {
+		m_memory_data[i] = s[pchar++];
+	}
+
+
+	for (int i = begin + size; i < end; ++i) {
+		m_memory_data[i] = '\0';
 	}
 }
 
-void Memory::store(const memory_address& mem_addr, const byte* data) {
+void Memory::store(const memory_address& mem_addr, const std::list<byte>& data) {
 	int begin = 0;
 	int end = 0;
 	if (mem_addr.data_or_instruction) {
-		for (int i = 0; i < m_addresses.size(); ++i) {
+		for (unsigned int i = 0; i < m_addresses.size(); ++i) {
 			if (m_addresses[i].alias == mem_addr.alias) {
 				begin = m_addresses[i].address;
 				end = m_addresses[i+1].address;
@@ -191,4 +269,18 @@ void Memory::store(const memory_address& mem_addr, const byte* data) {
 		}
 		store(begin, end, data);
 	} 
+}
+
+void Memory::storeData(const byte* mem_addr, const std::list<byte>& data) {
+	int begin = 0;
+	int end = 0;
+	for (unsigned int i = 0; i < m_addresses.size(); ++i) {
+		if (m_addresses[i].alias == mem_addr) {
+			begin = m_addresses[i].address;
+			end = m_addresses[i + 1].address;
+			erase(begin, end);
+			break;
+		}
+	}
+	store(begin, end, data);
 }

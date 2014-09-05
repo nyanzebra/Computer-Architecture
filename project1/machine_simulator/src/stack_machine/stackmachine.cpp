@@ -2,6 +2,8 @@
 
 #include "../logic/logic.h"
 
+stack Stack_Machine::m_stack = L_initStack(0);
+
 void Stack_Machine::execute() {
 	m_program_counter = 0;
 
@@ -20,23 +22,24 @@ void Stack_Machine::getNextInstruction() {
 }
 
 void Stack_Machine::processInstruction() {
-	std::string temp = m_current_instruction;
 	memory_address mem;
 
-	if (temp.find("push")) {
-		mem.alias = const_cast<char*>(temp.substr(temp.find("push"),temp.find("_")).c_str());
-		m_stack.push_back(mem);
-	} else if (temp.find("pop")) {
-		mem = m_stack.back();
-		m_stack.pop_back();
-		Memory::store(mem);
-	} else if (temp.find("add")) {
-		Logic::add(m_stack);
-	} else if (temp.find("mult")) {
-		Logic::mult(m_stack);
-	} else if (temp.find("prnt")) {
-		Logic::print(m_stack);
-	} else if (temp.find("end")) {
+	std::vector<std::string> iando = L_instructionAndOperand(L_listToString(m_current_instruction));
+
+	if (iando[0] == "push") {
+		std::string x = L_listToString(Memory::loadData(const_cast<char*>(iando[1].c_str())));
+		push(x);
+	} else if (iando[0] == "pop") {
+		pop(iando[1].c_str());
+	} else if (iando[0] == "add") {
+		int i = Logic::add();
+		push(std::to_string(i));
+	} else if (iando[0] == "mult") {
+		int i = Logic::mult();
+		push(std::to_string(i));
+	} else if (iando[0] == "prnt") {
+		Logic::print();
+	} else if (iando[0] == "end") {
 		Logic::end();
 	}
 }

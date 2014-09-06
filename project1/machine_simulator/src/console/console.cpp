@@ -1,21 +1,35 @@
-#include <iostream>
-
 #include "console.h"
 
-#include "../stack_machine/stackmachine.h"
 
+//nice ifdefs for determining what machine we are on
 #ifdef _WIN32
 #define default_dir "C:/Users/Robert/Documents/GitHub/Computer-Architecture/project1/assembly_code/"
 #endif
 #ifdef linux
 #define default_dir "/home/robert/Desktop/CA_PROJECT1/assembly_code/"
+
+//red text
+ColorText red(ColorText::RED);
+//green text
+ColorText green(ColorText::GREEN);
+//blue text
+ColorText blue(ColorText::BLUE);
+//default text
+ColorText def(ColorText::DEFAULT);
+
 #endif
 #define default_file "stack_sim.s"
 
-#define input_invalid "Invalid command entered. Type help for options."
+//maybe more error messages?
+#define input_invalid "ERROR: Invalid command entered. Type help for options. "
+#define need_file "ERROR: need to specify a file to open. "
+#define need_dir "ERROR: need to specify a directory to open. "
+#define need_args "ERROR: please supply the proper flags for function: "
+#define too_many_args "ERROR: too many flags were selected or too many arguments."
 
 bool Console::m_continue = false;
 
+//initial display
 void Console::printHelp() {
 	std::cout << "\nWelcome to machine simulator!\n\n"
 			  << "arguments:\n"
@@ -54,7 +68,7 @@ void Console::tokenize(const std::string& line) {
 	bool is_path = false;
 	for (char c : line) { // adds command and other info to vector
 		if (is_path) {
-			if (c != '"') {
+			if (c != '"') { //this part is for getting paths with spaces in them
 				temp += c;
 			} else {
 				m_command.push_back(temp);
@@ -65,7 +79,7 @@ void Console::tokenize(const std::string& line) {
 		if (c == '"') {
 			is_path = true;
 		}
-		if (c == ' ' && !is_path) {
+		if (c == ' ' && !is_path) { //for everything else this gets it
 			m_command.push_back(temp);
 			temp = "";
 		}else if (!is_path) {
@@ -85,24 +99,25 @@ void Console::parseInput() {
 	if (m_command.size() > 0) {
 		_arg0 = m_command[0]; //terminal command all args after are flags or content
 	} else {
-		std::cout << input_invalid << std::endl;
+		std::cout << input_invalid << std::endl; //blank input is wrong input
 	}
 
 	if (m_command.size() > 1) {
-		_arg1 = m_command[1];
+		_arg1 = m_command[1]; //if we have more than one argument
 	}
 
+	//decide what to do based on user input
 	if (_arg0 == "open") {
 		if (m_command.size() > 1) {
-			m_fileparser.readFile(_arg1);
+			m_fileparser.readFile(_arg1); //read in a file
 		} else {
-			std::cout << input_invalid << std::endl;
+			std::cout << input_invalid << need_file << std::endl; //if don't specify file
 		}
 	} else if (_arg0 == "dir") {
 		if (m_command.size() == 2) {
 			m_fileparser.setDirectory(_arg1);
 		} else {
-			std::cout << input_invalid << std::endl;
+			std::cout << input_invalid << need_dir << std::endl;
 		}
 	} else if (_arg0 == "default") {
 		m_fileparser.setDirectory(default_dir);
@@ -116,10 +131,13 @@ void Console::parseInput() {
 		} 
 	} else if (_arg0 == "start" && !m_fileparser.isEmpty()) {
 		if (_arg1 == "-s" || _arg1 == "--stack") {
-			Stack_Machine sm;
-			sm.execute();
+			Base_Machine* bm = new Stack_Machine();
+			bm->execute();
 		} else if (_arg1 == "-a" || _arg1 == "--accum") {
-
+			Base_Machine* bm = new Accum_Machine();
+			bm->execute();
+		} else {
+			std::cout << input_invalid << need_args << std::endl;
 		}
 	} else if (_arg0 == "help") {
 		printHelp();

@@ -1,56 +1,55 @@
 #pragma once
 
-#include <vector>
-#include <string>
-#include <list>
+//robert baldwin
+//this is the memory class
+//it is global and can be used wherever in the code given proper include
+//it is capable of storing instructions and data, loading instructions and data,
+//keeping track of memory addresses
+//writing over memory
+//clearing memory
+//please follow same format throughout!
 
-#include "../utility/types.h"
+#include "../pch.h"
 
+
+//some size definitions.. we will need to add some handlers for this
+//as we do not want our containers to exceed this value
+//this may mean switching to a queue over a vector
 #define max_data_size 5000
 #define max_instruction_size 5000
 #define max_address_size 1500
 
-//global memory class
-class Memory { //TODO need a way to move whole chunks of memory over x blocks to store other data so it is not overwritten or have it point to multiple areas
+class Memory { 
 public:
 
-	//store data wherever it can
-	static void store(const byte data); // store data at end of memory of given size
-	static void store(const halfword data); // store data at end of memory of given size
-	static void store(const word data); // store data at end of memory of given size
 	//store data at certain location can overwrite
-	static void store(const std::list<byte>& data); //store temp data 
-	static void store(const memory_address& mem_addr, const std::list<byte>& data); //store variable length 
-	static void storeData(const byte* mem_addr, const std::list<byte>& data); //store variable length data
+	static void storeData(const memoryAddress_s& mem_addr, const std::list<byte_t>& data); //store variable length 
+	static void storeData(const byte_t* mem_addr, const std::list<byte_t>& data); //store variable length data
 	//store one memory data into another location
-	static void store(const int& begin, const int& end, const std::list<byte>& data); // store memory at range begin->end and erase whatever was there before
-	static void store(const byte* mem_addr_0, const byte* mem_addr_1); //store memory at range of two addresses and erase what was there before
+	static void store(const int& begin, const int& end, const std::list<byte_t>& data); // store memory at range begin->end and erase whatever was there before
 	//load data from address
-	static std::list<byte> load(memory_address& mem_addr); // load from an address
-	static std::list<byte> loadData(const byte* location); //load exclusively data
-	static std::list<byte> loadData(const memory_address& location); //load exclusively data
-	static std::list<byte> loadInstruction(int& location); //load exclusively instructions
+	static std::list<byte_t> loadData(const byte_t* location); //load exclusively data
+	static std::list<byte_t> loadData(const memoryAddress_s& location); //load exclusively data
+	static std::list<byte_t> loadInstruction(int& location); //load exclusively instructions
+
 	//clear all memory
 	static void clear() { m_memory_data.clear(); m_memory_instruction.clear(); m_addresses.clear(); } // delete everything
 	//erase a segment
 	static void erase(const int& begin, const int& end); //delets memory at range of begin->end
 
 	//size
-	static unsigned int& getMemoryInstructionSize() { return m_instruction_counter; } //get size of bytes for all instructions
-	static unsigned int& getMemoryDataSize() { return m_data_counter; } //get size of bytes for all data
+	static unsigned int& getMemoryInstructionSize() { return m_instruction_counter; } //get size of byte_ts for all instructions
+	static unsigned int& getMemoryDataSize() { return m_data_counter; } //get size of byte_ts for all data
 
-	//temporary data
-	static void createTemporaryDataArea();
-
-	//per segment
-	static void storeData(const std::vector<std::string>& values);
-	static void storeInstruction(const std::vector<std::string>& values);
+	//per segment, by file parser
+	static void storeData(const std::vector<std::string>& values); //namely used by fileparser
+	static void storeInstruction(const std::vector<std::string>& values); //namely used by fileparser
 
 private:
-	//segmented memory, data, instruction, comments?
-	static std::vector<byte> m_memory_data;
-	static std::vector<byte> m_memory_instruction;
-	static std::vector<memory_address> m_addresses;
+	//segmented memory, data, instruction
+	static std::vector<byte_t> m_memory_data;
+	static std::vector<byte_t> m_memory_instruction;
+	static std::vector<memoryAddress_s> m_addresses;
 
 	//pointers
 	static unsigned int m_data_counter;

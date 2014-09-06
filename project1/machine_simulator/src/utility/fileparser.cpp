@@ -1,32 +1,30 @@
 #include "fileparser.h"
 
-#include "../memory/memory.h"
-
 void FileParser::readFile() {
-	if (m_filename.size() <= 0) {
+	if (m_filename.size() <= 0) { //obviously
 		return;
 	}
 
-	m_filename = m_directory + m_filename;
+	m_filename = m_directory + m_filename; //set path
 	std::ifstream input(m_filename, std::ifstream::in);
 
 	for (std::string line; getline(input, line);) {
 		m_contents.push_back(line);
 	}
 
-	findData();
-	findInstructions();
-	moveToMemory();
+	findData(); //get all the data
+	findInstructions(); //get all the instructions
+	moveToMemory(); //move them to memory
 
-	input.close();
+	input.close(); //close file
 }
 
 void FileParser::readFile(const std::string& filename) {
-	if (filename.size() <= 0) {
+	if (m_filename.size() <= 0) { //obviously
 		return;
 	}
 
-	m_filename = m_directory + filename;
+	m_filename = m_directory + filename;//set path
 
 	std::ifstream input(m_directory + filename, std::ifstream::in);
 
@@ -34,14 +32,14 @@ void FileParser::readFile(const std::string& filename) {
 		m_contents.push_back(line);
 	}
 
-	findData();
-	findInstructions();
-	moveToMemory();
+	findData(); //get all the data
+	findInstructions(); //get all the instructions
+	moveToMemory(); //move them to memory
 
-	input.close();
+	input.close(); //close file
 }
 
-void FileParser::printContents() const {
+void FileParser::printContents() const { //print file contents
 	for (std::string s : m_contents) {
 		std::cout << s << std::endl;
 	}
@@ -98,16 +96,16 @@ const std::vector<std::string> FileParser::findInstructionAndOperand(const std::
 	std::string value;
 
 	for (char c : s) {
-		if (c != ' ' && c != '\t') {
+		if (c != ' ' && c != '\t') { //basically a tokenizer of sorts
 			value += c;
 		}
-		if (value.size() > 0 && c == ' ') {
+		if (value.size() > 0 && c == ' ') { //get each piece of an instruction
 			temp.push_back(value);
 			value = "";
 		}
 	}
 
-	if (value.size() > 0) {
+	if (value.size() > 0) { //if just one piece catch it
 		temp.push_back(value);
 	}
 
@@ -118,6 +116,8 @@ void FileParser::moveToMemory() {
 	bool is_data = false;
 	bool is_instruction = false;
 
+	Memory::clear();
+
 	for (std::string s : m_contents) {
 		if (s.find(".text")) {
 			is_instruction = true;
@@ -125,12 +125,12 @@ void FileParser::moveToMemory() {
 			is_data = true;
 		} 
 		if (is_data) {
-			Memory::storeData(m_data);
-			m_data.clear();
+			Memory::storeData(m_data); //move to data
+			m_data.clear(); //delete the data collection
 		}
 		if (is_instruction) {
-			Memory::storeInstruction(m_instructions);
-			m_instructions.clear();
+			Memory::storeInstruction(m_instructions);//move to instructions
+			m_instructions.clear(); //delete the instruction collection
 		}
 	}
 }

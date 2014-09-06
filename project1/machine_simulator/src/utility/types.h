@@ -1,22 +1,27 @@
-#include <string>
+//robert baldwin
+//general typing is done here
+//if make a type it should be type_t
+//main reason for this is so we know what is a manufactured type
+//structs need to be struct_s
 
 #ifndef TYPES_H
-#include <string>
-
 #define TYPES_H
+#include "../pch.h"
 
 //data types in memory
-typedef char byte;
-typedef short halfword;
-typedef int word;
-typedef char* asciiz;
+typedef char byte_t;
+typedef short halfword_t;
+typedef int word_t;
+typedef char* asciiz_t;
 
 //stack
-typedef std::list<std::string> stack;
+typedef std::list<std::string> stack_t;
 
-//what memory is address and pointer value
-struct memory_address {
-	bool data_or_instruction;
+//registers
+typedef std::string register_t;
+
+//what memory is address and alias as could have X as the address alias
+struct memoryAddress_s {
 	int address;
 	std::string alias;
 };

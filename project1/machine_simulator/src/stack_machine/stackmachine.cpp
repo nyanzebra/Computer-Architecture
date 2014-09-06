@@ -1,28 +1,9 @@
 #include "stackmachine.h"
 
-#include "../logic/logic.h"
-
-stack Stack_Machine::m_stack = L_initStack(0);
-
-void Stack_Machine::execute() {
-	m_program_counter = 0;
-
-	while (m_program_counter != Memory::getMemoryInstructionSize()) {
-		getNextInstruction();
-		processInstruction();
-	}
-}
-
-void Stack_Machine::getNextInstruction() {
-	memory_address addr;
-	addr.data_or_instruction = false;
-	addr.address = m_program_counter;
-	m_current_instruction = Memory::load(addr);
-	m_program_counter = addr.address;
-}
+stack_t Stack_Machine::m_stack = L_initStack(0);
 
 void Stack_Machine::processInstruction() {
-	memory_address mem;
+	memoryAddress_s mem;
 
 	std::vector<std::string> iando = L_instructionAndOperand(L_listToString(m_current_instruction));
 
@@ -38,7 +19,7 @@ void Stack_Machine::processInstruction() {
 		int i = Logic::mult();
 		push(std::to_string(i));
 	} else if (iando[0] == "prnt") {
-		Logic::print();
+		Logic::stack_print();
 	} else if (iando[0] == "end") {
 		Logic::end();
 	}

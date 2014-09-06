@@ -1,10 +1,8 @@
 #pragma once
 
-#include <string>
-#include <iostream>
-#include <vector>
-#include <fstream>
-#include <stdio.h>
+#ifndef PCH_H
+#include "../pch.h"
+#endif
 
 // dir: /home/robert/Desktop/CA_PROJECT1/assembly_code
 
@@ -27,7 +25,7 @@ public:
 	const std::vector<std::string> findInstructionAndOperand(const std::string& s) const;
 
 	//has data
-	const bool& isEmpty() { return (m_contents.size() > 0) ? false : true; } 
+	const bool&& isEmpty() { return (m_contents.size() > 0) ? false : true; } 
 
 	//determine extension
 	std::string getFileExtension(const std::string& filename) {

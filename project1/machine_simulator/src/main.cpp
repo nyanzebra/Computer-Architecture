@@ -1,4 +1,4 @@
-#include "console\console.h"
+#include "console/console.h"
 
 int main(int argc, char const *argv[]) {
 

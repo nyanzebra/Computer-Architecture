@@ -1,8 +1,9 @@
 #include <iostream>
+#include <stdlib.h>
 
 #include "logic.h"
-#include "../machine/accummachine.h"
-#include "../machine/stackmachine.h"
+#include "../machines/accummachine.h"
+#include "../machines/stackmachine.h"
 
 //stack machine add
 const int Logic::add() {
@@ -17,7 +18,7 @@ const int Logic::add() {
 //accum machine add
 void Logic::add(const std::string& s) {
 	int i = atoi(s.c_str()); //convert to int
-	int j = stoi(Accum_Machine::getReg()); //convert to int
+	int j = std::stoi(Accum_Machine::getReg()); //convert to int
 	Accum_Machine::setReg(std::to_string(i + j)); //set register
 }
 //stack machine multiply
@@ -33,7 +34,7 @@ const int Logic::mult() {
 //accum machine multiply
 void Logic::mult(const std::string& s) {
 	int i = atoi(s.c_str()); //convert to int
-	int j = stoi(Accum_Machine::getReg()); //convert to int
+	int j = std::stoi(Accum_Machine::getReg()); //convert to int
 	Accum_Machine::setReg(std::to_string(i * j)); //set register
 }
 void Logic::stack_print() {

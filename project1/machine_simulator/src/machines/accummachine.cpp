@@ -1,6 +1,6 @@
 #include "accummachine.h"
 
-register_t Accum_Machine::m_accumulator = "";
+reg_t Accum_Machine::m_accumulator = "";
 
 void Accum_Machine::execute() {
 	m_program_counter = 0;

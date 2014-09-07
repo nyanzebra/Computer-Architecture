@@ -21,7 +21,7 @@ typedef char* asciiz_t;
 typedef std::list<std::string> stack_t;
 
 //registers
-typedef std::string register_t;
+typedef std::string reg_t;
 
 //what memory is address and alias as could have X as the address alias
 struct memoryAddress_s {

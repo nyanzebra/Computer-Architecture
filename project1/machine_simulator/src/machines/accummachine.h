@@ -16,12 +16,12 @@ public:
 	}
 	void load(const std::string& value) { m_accumulator = value; }
 
-	static register_t getReg() { return m_accumulator; }
-	static void setReg(const register_t& reg) { m_accumulator = reg; }
+	static reg_t getReg() { return m_accumulator; }
+	static void setReg(const reg_t& reg) { m_accumulator = reg; }
 	
 	void execute();//goes through all instructions by checking to see if pc == ic
 private:
 	int m_program_counter;
 	std::list<byte_t> m_current_instruction;
-	static register_t m_accumulator;
+	static reg_t m_accumulator;
 };

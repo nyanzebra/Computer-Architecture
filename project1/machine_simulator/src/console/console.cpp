@@ -1,16 +1,11 @@
 #include <iostream>
 
 #include "console.h"
-#include "../machine/accummachine.h"
-#include "../machine/stackmachine.h"
+#include "../utility/colors.h"
+#include "../machines/accummachine.h"
+#include "../machines/stackmachine.h"
 
-
-//nice ifdefs for determining what machine we are on
-#ifdef _WIN32
-#define default_dir "C:/Users/Robert/Desktop/Computer-Architecture-test/project1/assembly_code/"
-#endif
-#ifdef linux
-#define default_dir "/home/robert/Desktop/CA_PROJECT1/assembly_code/"
+#define default_dir "/home/robert/Documents/GitHub/Computer-Architecture/project1/assembly_code/"
 
 //red text
 ColorText red(ColorText::RED);
@@ -21,8 +16,7 @@ ColorText blue(ColorText::BLUE);
 //default text
 ColorText def(ColorText::DEFAULT);
 
-#endif
-#define default_file "accum_sim.s"
+#define default_file "stack_sim.s"
 
 //maybe more error messages?
 #define input_invalid "ERROR: Invalid command entered. Type help for options. "

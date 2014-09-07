@@ -9,8 +9,9 @@ main:
 	load X 		#reg = X
 	mult B		#reg = X*B
 	stor B 		#B = X*B
-	add	A		#reg = A*X^2 + X*B
-	add	C		#reg = A*X^2 + X*B + C
+	load B		#reg = X*B
+	add A		#reg = A*X^2 + X*B
+	add C		#reg = A*X^2 + X*B + C
 	stor A 		#A = A*X^2 + X*B + C   
 	load ans	#reg = "Answer = "
 	prnt		#print "Answer = "
@@ -21,9 +22,9 @@ main:
 	end
 
 .data
-X:		.word 3
-A:		.word 7
-B:		.word 5
-C:		.word 4
+X:	.word 3
+A:	.word 7
+B:	.word 5
+C:	.word 4
 ans: 	.asciiz "Answer = "
 nl: 	.asciiz "\n"

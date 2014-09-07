@@ -7,9 +7,10 @@
 //this could be useful if we build on this project and would like a clear function for console
 //then everything gets deleted and we can start over
 
-#ifndef PCH_H
-#include "../pch.h"
-#endif
+#include <string>
+#include <vector>
+
+#include "../utility/fileparser.h"
 
 class Console { //singleton
 public:

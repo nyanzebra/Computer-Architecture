@@ -1,6 +1,4 @@
-#ifndef PCH_H
-#include "pch.h"
-#endif
+#include "console\console.h"
 
 int main(int argc, char const *argv[]) {
 

@@ -1,9 +1,13 @@
+#include <iostream>
+
 #include "console.h"
+#include "../machine/accummachine.h"
+#include "../machine/stackmachine.h"
 
 
 //nice ifdefs for determining what machine we are on
 #ifdef _WIN32
-#define default_dir "C:/Users/Robert/Documents/GitHub/Computer-Architecture/project1/assembly_code/"
+#define default_dir "C:/Users/Robert/Desktop/Computer-Architecture-test/project1/assembly_code/"
 #endif
 #ifdef linux
 #define default_dir "/home/robert/Desktop/CA_PROJECT1/assembly_code/"
@@ -18,7 +22,7 @@ ColorText blue(ColorText::BLUE);
 ColorText def(ColorText::DEFAULT);
 
 #endif
-#define default_file "stack_sim.s"
+#define default_file "accum_sim.s"
 
 //maybe more error messages?
 #define input_invalid "ERROR: Invalid command entered. Type help for options. "
@@ -130,14 +134,17 @@ void Console::parseInput() {
 			std::cout << input_invalid << std::endl;
 		} 
 	} else if (_arg0 == "start" && !m_fileparser.isEmpty()) {
-		if (_arg1 == "-s" || _arg1 == "--stack") {
-			Base_Machine* bm = new Stack_Machine();
-			bm->execute();
-		} else if (_arg1 == "-a" || _arg1 == "--accum") {
-			Base_Machine* bm = new Accum_Machine();
-			bm->execute();
-		} else {
+		if (m_command.size() == 1) {
 			std::cout << input_invalid << need_args << std::endl;
+		}
+		if (_arg1 == "-s" || _arg1 == "--stack") {
+			Stack_Machine sm;
+			sm.execute();
+		} else if (_arg1 == "-a" || _arg1 == "--accum") {
+			Accum_Machine am;
+			am.execute();
+		} else {
+			std::cout << input_invalid << need_file << std::endl;
 		}
 	} else if (_arg0 == "help") {
 		printHelp();

@@ -2,6 +2,22 @@
 
 stack_t Stack_Machine::m_stack = L_initStack(0);
 
+void Stack_Machine::execute() {
+	m_program_counter = 0;
+
+	while (m_program_counter != Memory::getMemoryInstructionSize()) {
+		getNextInstruction();
+		processInstruction();
+	}
+}
+
+void Stack_Machine::getNextInstruction() {
+	memoryAddress_s addr;
+	addr.address = m_program_counter;
+	m_current_instruction = Memory::loadInstruction(addr.address);
+	m_program_counter = addr.address;
+}
+
 void Stack_Machine::processInstruction() {
 	memoryAddress_s mem;
 

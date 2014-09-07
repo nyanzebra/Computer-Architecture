@@ -1,3 +1,5 @@
+#pragma once 
+
 //robert baldwin
 //general typing is done here
 //if make a type it should be type_t
@@ -6,7 +8,8 @@
 
 #ifndef TYPES_H
 #define TYPES_H
-#include "../pch.h"
+#include <list>
+#include <string>
 
 //data types in memory
 typedef char byte_t;
@@ -22,7 +25,7 @@ typedef std::string register_t;
 
 //what memory is address and alias as could have X as the address alias
 struct memoryAddress_s {
-	int address;
+	unsigned int address;
 	std::string alias;
 };
 

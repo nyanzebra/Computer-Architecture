@@ -12,10 +12,6 @@
 #ifndef LAMBDAS_H
 #define LAMBDAS_H
 
-#ifndef PCH_H
-#include "../pch.h"
-#endif
-
 //all must have const in order to not be defined twice... or more
 const auto L_makebyte_tVector = [](const int& n) { return std::vector<byte_t>(n); };
 const auto L_makeMemoryAddressVector = [](const int& n) { return std::vector<memoryAddress_s>(n); };

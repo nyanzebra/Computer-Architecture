@@ -1,3 +1,7 @@
+#include <fstream>
+#include <iostream>
+
+#include "../memory/memory.h"
 #include "fileparser.h"
 
 void FileParser::readFile() {
@@ -20,7 +24,7 @@ void FileParser::readFile() {
 }
 
 void FileParser::readFile(const std::string& filename) {
-	if (m_filename.size() <= 0) { //obviously
+	if (filename.size() <= 0) { //obviously
 		return;
 	}
 
@@ -99,7 +103,7 @@ const std::vector<std::string> FileParser::findInstructionAndOperand(const std::
 		if (c != ' ' && c != '\t') { //basically a tokenizer of sorts
 			value += c;
 		}
-		if (value.size() > 0 && c == ' ') { //get each piece of an instruction
+		if (value.size() > 0 && (c == ' ' || c == '\t')) { //get each piece of an instruction
 			temp.push_back(value);
 			value = "";
 		}

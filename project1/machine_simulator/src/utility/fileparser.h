@@ -1,8 +1,7 @@
 #pragma once
 
-#ifndef PCH_H
-#include "../pch.h"
-#endif
+#include <string>
+#include <vector>
 
 // dir: /home/robert/Desktop/CA_PROJECT1/assembly_code
 

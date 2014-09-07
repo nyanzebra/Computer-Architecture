@@ -17,6 +17,13 @@ void Memory::storeData(const std::vector<std::string>& values) {
 	//store in datum
 	//values format = [variable][type][datum]
 
+	if (m_memory_data.size() == 0) {
+		m_memory_data = L_makebyte_tVector(max_data_size);
+	}
+	if (m_addresses.size() == 0) {
+		m_addresses = L_makeMemoryAddressVector(max_address_size);
+	}
+
 	int counter = 0;// 3 options and need to handle it accordingly
 	int type = 0; //help place datum correctly
 	for (std::string s : values) { //for all the data place them in memory correctly
@@ -26,15 +33,18 @@ void Memory::storeData(const std::vector<std::string>& values) {
 			mem->address = m_data_counter;
 			m_addresses[m_address_counter] = *mem;
 			m_address_counter += 1;
-		} 
+		}
 		if (counter == 1) { //check against type
 			if (s == ".byte") {
 				type = 0;
-			} else if (s == ".halfword") {
+			}
+			else if (s == ".halfword") {
 				type = 1;
-			} else if (s == ".word") {
+			}
+			else if (s == ".word") {
 				type = 2;
-			} else if (s == ".asciiz") {
+			}
+			else if (s == ".asciiz") {
 				type = 3;
 			}
 		}
@@ -42,13 +52,16 @@ void Memory::storeData(const std::vector<std::string>& values) {
 			if (type == 0) {
 				m_memory_data[m_data_counter] = s[0]; //push_back char 
 				m_data_counter += 1; //move data pointer along to top or back of vector
-			} else if (type == 1) {
+			}
+			else if (type == 1) {
 				m_memory_data[m_data_counter] = s[0]; //push_back char 
 				m_data_counter += 2;
-			} else if (type == 2) {
+			}
+			else if (type == 2) {
 				m_memory_data[m_data_counter] = (int)s[0]; //push_back char 
 				m_data_counter += 4;
-			} else if (type == 3) {
+			}
+			else if (type == 3) {
 				for (char c : s) { //add all ascii characters
 					if (c != '"') {
 						m_memory_data[m_data_counter++] = c;
@@ -70,8 +83,15 @@ void Memory::storeInstruction(const std::vector<std::string>& instructions) {
 	//for instance push x could be [p][u][o][x] which would read push operand x
 	//if reading each as word we should probably have everything as word size?
 
+	if (m_memory_instruction.size() == 0) {
+		m_memory_instruction = L_makebyte_tVector(max_instruction_size);
+	}
+
+	Memory::machine type;
+
 	for (auto it = instructions.begin(); it != instructions.end(); ++it) {
 		if (*it == "push") {
+			type = Memory::stackmachine;
 			m_memory_instruction[m_instruction_counter++] = 'p';
 			m_memory_instruction[m_instruction_counter++] = 'u';
 			m_memory_instruction[m_instruction_counter++] = 's';
@@ -82,7 +102,8 @@ void Memory::storeInstruction(const std::vector<std::string>& instructions) {
 				m_memory_instruction[m_instruction_counter++] = c;
 			}
 			m_memory_instruction[m_instruction_counter++] = '_'; // this is a separator of instructions so if else statements can be avoided
-		} else if (*it == "pop") {
+		}
+		else if (*it == "pop") {
 			m_memory_instruction[m_instruction_counter++] = 'p';
 			m_memory_instruction[m_instruction_counter++] = 'o';
 			m_memory_instruction[m_instruction_counter++] = 'p';
@@ -92,24 +113,73 @@ void Memory::storeInstruction(const std::vector<std::string>& instructions) {
 				m_memory_instruction[m_instruction_counter++] = c;
 			}
 			m_memory_instruction[m_instruction_counter++] = '_'; // this is a separator of instructions so if else statements can be avoided
-		} else if (*it == "add") {
+		}
+		if (*it == "stor") {
+			m_memory_instruction[m_instruction_counter++] = 's';
+			m_memory_instruction[m_instruction_counter++] = 't';
+			m_memory_instruction[m_instruction_counter++] = 'o';
+			m_memory_instruction[m_instruction_counter++] = 'r';
+			m_memory_instruction[m_instruction_counter++] = '`'; // this is a separator of instructions so if else statements can be avoided
+			++it; // get operand
+			for (char c : *it) { //add in the operand of variable size
+				m_memory_instruction[m_instruction_counter++] = c;
+			}
+			m_memory_instruction[m_instruction_counter++] = '_'; // this is a separator of instructions so if else statements can be avoided
+		}
+		else if (*it == "load") {
+			type = Memory::accummachine;
+			m_memory_instruction[m_instruction_counter++] = 'l';
+			m_memory_instruction[m_instruction_counter++] = 'o';
+			m_memory_instruction[m_instruction_counter++] = 'a';
+			m_memory_instruction[m_instruction_counter++] = 'd';
+			m_memory_instruction[m_instruction_counter++] = '`'; // this is a separator of instructions so if else statements can be avoided
+			++it; //get operand
+			for (char c : *it) { //add in the operand of variable size
+				m_memory_instruction[m_instruction_counter++] = c;
+			}
+			m_memory_instruction[m_instruction_counter++] = '_'; // this is a separator of instructions so if else statements can be avoided
+		}
+		else if (*it == "add") {
 			m_memory_instruction[m_instruction_counter++] = 'a';
 			m_memory_instruction[m_instruction_counter++] = 'd';
 			m_memory_instruction[m_instruction_counter++] = 'd';
-			m_memory_instruction[m_instruction_counter++] = '_'; // this is a separator of instructions so if else statements can be avoided
-		} else if (*it == "mult") {
+			if (type != Memory::accummachine){
+				m_memory_instruction[m_instruction_counter++] = '_'; // this is a separator of instructions so if else statements can be avoided
+			}
+			else {
+				m_memory_instruction[m_instruction_counter++] = '`'; // this is a separator of instructions so if else statements can be avoided
+				++it; //get operand
+				for (char c : *it) { //add in the operand of variable size
+					m_memory_instruction[m_instruction_counter++] = c;
+				}
+				m_memory_instruction[m_instruction_counter++] = '_'; // this is a separator of instructions so if else statements can be avoided
+			}
+		}
+		else if (*it == "mult") {
 			m_memory_instruction[m_instruction_counter++] = 'm';
 			m_memory_instruction[m_instruction_counter++] = 'u';
 			m_memory_instruction[m_instruction_counter++] = 'l';
 			m_memory_instruction[m_instruction_counter++] = 't';
-			m_memory_instruction[m_instruction_counter++] = '_'; // this is a separator of instructions so if else statements can be avoided
-		} else if (*it == "prnt") {
+			if (type != Memory::accummachine){
+				m_memory_instruction[m_instruction_counter++] = '_'; // this is a separator of instructions so if else statements can be avoided
+			}
+			else {
+				m_memory_instruction[m_instruction_counter++] = '`'; // this is a separator of instructions so if else statements can be avoided
+				++it; //get operand
+				for (char c : *it) { //add in the operand of variable size
+					m_memory_instruction[m_instruction_counter++] = c;
+				}
+				m_memory_instruction[m_instruction_counter++] = '_'; // this is a separator of instructions so if else statements can be avoided
+			}
+		}
+		else if (*it == "prnt") {
 			m_memory_instruction[m_instruction_counter++] = 'p';
 			m_memory_instruction[m_instruction_counter++] = 'r';
 			m_memory_instruction[m_instruction_counter++] = 'n';
 			m_memory_instruction[m_instruction_counter++] = 't';
 			m_memory_instruction[m_instruction_counter++] = '_'; // this is a separator of instructions so if else statements can be avoided
-		} else if (*it == "end") {
+		}
+		else if (*it == "end") {
 			m_memory_instruction[m_instruction_counter++] = 'e';
 			m_memory_instruction[m_instruction_counter++] = 'n';
 			m_memory_instruction[m_instruction_counter++] = 'd';
@@ -179,7 +249,7 @@ std::list<byte_t> Memory::loadData(const memoryAddress_s& mem) {
 	return result;
 }
 
-std::list<byte_t> Memory::loadInstruction(int& location) {
+std::list<byte_t> Memory::loadInstruction(unsigned int& location) {
 	std::list<byte_t> result;
 
 	while (m_memory_instruction[location] != '_') { //our nice separator! 

@@ -9,8 +9,13 @@
 //clearing memory
 //please follow same format throughout!
 
-#include "../pch.h"
+#include <string>
+#include <vector>
+#include <list>
 
+#include "../utility/types.h"
+#include "../utility/lambdas.h"
+#include "../logic/logic.h"
 
 //some size definitions.. we will need to add some handlers for this
 //as we do not want our containers to exceed this value
@@ -21,7 +26,10 @@
 
 class Memory { 
 public:
-
+	enum machine {
+		stackmachine,
+		accummachine,
+	};
 	//store data at certain location can overwrite
 	static void storeData(const memoryAddress_s& mem_addr, const std::list<byte_t>& data); //store variable length 
 	static void storeData(const byte_t* mem_addr, const std::list<byte_t>& data); //store variable length data
@@ -30,7 +38,7 @@ public:
 	//load data from address
 	static std::list<byte_t> loadData(const byte_t* location); //load exclusively data
 	static std::list<byte_t> loadData(const memoryAddress_s& location); //load exclusively data
-	static std::list<byte_t> loadInstruction(int& location); //load exclusively instructions
+	static std::list<byte_t> loadInstruction(unsigned int& location); //load exclusively instructions
 
 	//clear all memory
 	static void clear() { m_memory_data.clear(); m_memory_instruction.clear(); m_addresses.clear(); } // delete everything

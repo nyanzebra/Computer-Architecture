@@ -56,3 +56,6 @@ void Logic::accum_print() {
 		std::cout << std::endl; //print new line
 	}
 }
+int Logic::end() {
+	return 0;
+}

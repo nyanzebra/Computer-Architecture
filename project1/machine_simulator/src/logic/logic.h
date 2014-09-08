@@ -12,7 +12,7 @@ public:
 	static const int mult();
 	//stack machine multiply
 	static void mult(const std::string& s);
-	static int end() { return 0; };
+	static int end();
 	static void stack_print();
 	static void accum_print();
 };

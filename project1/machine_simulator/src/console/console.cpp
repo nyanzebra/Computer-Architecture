@@ -5,7 +5,7 @@
 #include "../machines/accummachine.h"
 #include "../machines/stackmachine.h"
 
-#define default_dir "/home/robert/Documents/GitHub/Computer-Architecture/project1/assembly_code/"
+#define default_dir "C:/Users/Ian McPherson/Desktop/CA_PROJECT1-2014-09-02/CA_PROJECT1/assembly_code/"
 
 //red text
 ColorText red(ColorText::RED);
@@ -107,6 +107,7 @@ void Console::parseInput() {
 	//decide what to do based on user input
 	if (_arg0 == "open") {
 		if (m_command.size() > 1) {
+			Memory::clearPrevious();
 			m_fileparser.readFile(_arg1); //read in a file
 		} else {
 			std::cout << input_invalid << need_file << std::endl; //if don't specify file
@@ -129,18 +130,18 @@ void Console::parseInput() {
 		} 
 	} else if (_arg0 == "start" && !m_fileparser.isEmpty()) {
 		if (m_command.size() == 1) {
-			std::cout << red << input_invalid << need_args << def << std::endl;
+			std::cout << red << need_args << def << std::endl;
 		}
 		if (_arg1 == "-s" || _arg1 == "--stack") {
-			Memory::copy(); // copy the data
+			Memory::copy();
 			Stack_Machine sm;
 			sm.execute();
-			Memory::restore(); //restore the data
+			Memory::restore();
 		} else if (_arg1 == "-a" || _arg1 == "--accum") {
-			Memory::copy(); // copy the data
+			Memory::copy();
 			Accum_Machine am;
 			am.execute();
-			Memory::restore(); //restore the data
+			Memory::restore();
 		} else {
 			std::cout << input_invalid << need_file << std::endl;
 		}

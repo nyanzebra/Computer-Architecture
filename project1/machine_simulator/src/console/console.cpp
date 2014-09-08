@@ -129,14 +129,18 @@ void Console::parseInput() {
 		} 
 	} else if (_arg0 == "start" && !m_fileparser.isEmpty()) {
 		if (m_command.size() == 1) {
-			std::cout << input_invalid << need_args << std::endl;
+			std::cout << red << input_invalid << need_args << def << std::endl;
 		}
 		if (_arg1 == "-s" || _arg1 == "--stack") {
+			Memory::copy(); // copy the data
 			Stack_Machine sm;
 			sm.execute();
+			Memory::restore(); //restore the data
 		} else if (_arg1 == "-a" || _arg1 == "--accum") {
+			Memory::copy(); // copy the data
 			Accum_Machine am;
 			am.execute();
+			Memory::restore(); //restore the data
 		} else {
 			std::cout << input_invalid << need_file << std::endl;
 		}

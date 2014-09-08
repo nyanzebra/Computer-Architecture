@@ -41,7 +41,9 @@ public:
 	static std::list<byte_t> loadInstruction(unsigned int& location); //load exclusively instructions
 
 	//clear all memory
-	static void clear() { m_memory_data.clear(); m_memory_instruction.clear(); m_addresses.clear(); } // delete everything
+	static void clear() { m_memory_data.clear(); m_memory_instruction.clear(); } // delete everything
+	static void copy() { *m_data_copy = m_memory_data; }
+	static void restore() { m_memory_data = *m_data_copy; m_data_counter, m_instruction_counter, m_address_counter = 0; }
 	//erase a segment
 	static void erase(const int& begin, const int& end); //delets memory at range of begin->end
 
@@ -58,6 +60,9 @@ private:
 	static std::vector<byte_t> m_memory_data;
 	static std::vector<byte_t> m_memory_instruction;
 	static std::vector<memoryAddress_s> m_addresses;
+
+	//for restoring data purposes only...
+	static std::vector<byte_t>* m_data_copy;
 
 	//pointers
 	static unsigned int m_data_counter;

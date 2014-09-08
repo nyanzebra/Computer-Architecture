@@ -37,6 +37,8 @@ void Stack_Machine::processInstruction() {
 	} else if (iando[0] == "prnt") {
 		Logic::stack_print();
 	} else if (iando[0] == "end") {
+		m_stack.clear();
+		Memory::clear();
 		Logic::end();
 	}
 }

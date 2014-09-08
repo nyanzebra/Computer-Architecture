@@ -1,6 +1,7 @@
 #include "memory.h"
 
 //initialize containers
+std::vector<byte_t>* Memory::m_data_copy = new std::vector<byte_t>();
 std::vector<byte_t> Memory::m_memory_data = L_makebyte_tVector(max_data_size);
 std::vector<byte_t> Memory::m_memory_instruction = L_makebyte_tVector(max_instruction_size);
 std::vector<memoryAddress_s> Memory::m_addresses = L_makeMemoryAddressVector(max_address_size);

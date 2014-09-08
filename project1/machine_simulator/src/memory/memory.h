@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 #include <list>
-
+#include <iostream>
 #include "../utility/types.h"
 #include "../utility/lambdas.h"
 #include "../logic/logic.h"
@@ -41,12 +41,22 @@ public:
 	static std::list<byte_t> loadInstruction(unsigned int& location); //load exclusively instructions
 
 	//clear all memory
-	static void clear() { m_memory_data.clear(); m_memory_instruction.clear(); } // delete everything
-	static void copy() { *m_data_copy = m_memory_data; }
-	static void restore() { m_memory_data = *m_data_copy; m_data_counter, m_instruction_counter, m_address_counter = 0; }
+	static void clear() { m_memory_data.clear();} // delete everything
 	//erase a segment
 	static void erase(const int& begin, const int& end); //delets memory at range of begin->end
 
+	static void copy() { *m_data_copy = m_memory_data; };
+	static void restore() {
+		m_memory_data = *m_data_copy; 
+		//m_data_counter=0; 
+		//m_instruction_counter = 0;
+		//m_address_counter = 0; 
+		if (m_memory_instruction.size() == 0) {
+			std::cout << "here is the error";
+			//m_memory_instruction = L_makebyte_tVector(max_instruction_size);
+		}
+}	
+	static void clearPrevious() { m_memory_instruction.clear(); m_memory_data.clear(); m_data_counter = 0; m_instruction_counter=0; m_address_counter=0;}
 	//size
 	static unsigned int& getMemoryInstructionSize() { return m_instruction_counter; } //get size of byte_ts for all instructions
 	static unsigned int& getMemoryDataSize() { return m_data_counter; } //get size of byte_ts for all data
@@ -57,12 +67,10 @@ public:
 
 private:
 	//segmented memory, data, instruction
+	static std::vector<byte_t>* m_data_copy;
 	static std::vector<byte_t> m_memory_data;
 	static std::vector<byte_t> m_memory_instruction;
 	static std::vector<memoryAddress_s> m_addresses;
-
-	//for restoring data purposes only...
-	static std::vector<byte_t>* m_data_copy;
 
 	//pointers
 	static unsigned int m_data_counter;

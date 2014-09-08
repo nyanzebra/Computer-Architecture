@@ -17,7 +17,6 @@ void Memory::storeData(const std::vector<std::string>& values) {
 	//store values by distance according to type
 	//store in datum
 	//values format = [variable][type][datum]
-
 	if (m_memory_data.size() == 0) {
 		m_memory_data = L_makebyte_tVector(max_data_size);
 	}
@@ -83,7 +82,8 @@ void Memory::storeInstruction(const std::vector<std::string>& instructions) {
 	//all instructions will be word size two chars for instruction, two chars for operand
 	//for instance push x could be [p][u][o][x] which would read push operand x
 	//if reading each as word we should probably have everything as word size?
-
+	
+	
 	if (m_memory_instruction.size() == 0) {
 		m_memory_instruction = L_makebyte_tVector(max_instruction_size);
 	}

@@ -5,6 +5,8 @@
 #include "fileparser.h"
 
 void FileParser::readFile() {
+	m_contents.clear();
+	
 	if (m_filename.size() <= 0) { //obviously
 		return;
 	}
@@ -24,6 +26,7 @@ void FileParser::readFile() {
 }
 
 void FileParser::readFile(const std::string& filename) {
+	m_contents.clear();
 	if (filename.size() <= 0) { //obviously
 		return;
 	}

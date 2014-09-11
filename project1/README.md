@@ -11,7 +11,9 @@ type help for list of commands and their arguments.
 Example input:
 
 dir \PATH_TO_.S_CODE\
+
 open stack_sim.s 
+
 start -s
 
 

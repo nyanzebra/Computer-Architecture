@@ -5,8 +5,6 @@
 #include "../machines/accummachine.h"
 #include "../machines/stackmachine.h"
 
-#define default_dir "C:/Users/Ian McPherson/Desktop/CA_PROJECT1-2014-09-02/CA_PROJECT1/assembly_code/"
-
 //red text
 ColorText red(ColorText::RED);
 //green text
@@ -15,8 +13,6 @@ ColorText green(ColorText::GREEN);
 ColorText blue(ColorText::BLUE);
 //default text
 ColorText def(ColorText::DEFAULT);
-
-#define default_file "stack_sim.s"
 
 //maybe more error messages?
 #define input_invalid "ERROR: Invalid command entered. Type help for options. "
@@ -37,7 +33,6 @@ void Console::printHelp() {
 			  << "help\t\t\t display commands\n"
 			  << "open\t\t\t takes a file argument\n"
 			  << "start\t\t\t will execute file\n"
-			  << "default\t\t\t rob's default directory and file\n"
 			  << "dir\t\t\t takes a directory path argument\n"
 			  << "file\t\t\t will display what file is currently being used\n"
 			  << "quit\t\t\t will exit the program\n"
@@ -118,9 +113,6 @@ void Console::parseInput() {
 		} else {
 			std::cout << input_invalid << need_dir << std::endl;
 		}
-	} else if (_arg0 == "default") {
-		m_fileparser.setDirectory(default_dir);
-		m_fileparser.readFile(default_file);
 	} else if (_arg0 == "file") {
 		if (m_command.size() == 1) {
 				std::cout << m_fileparser.getFilename() << std::endl;

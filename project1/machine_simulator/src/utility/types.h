@@ -8,25 +8,25 @@
 
 #ifndef TYPES_H
 #define TYPES_H
-#include <list>
-#include <string>
+
+#define MIN_SEGMENT_INSTRUCTION 0 // begin
+#define MAX_SEGMENT_INSTRUCTION 99 // end
+#define MIN_SEGMENT_DATA 100 //begin 
+#define MAX_SEGMENT_DATA 200// end
+#define MIN_SEGMENT_STACK 201 // begin
+#define MAX_SEGMENT_STACK 256 // end
 
 //data types in memory
-typedef char byte_t;
-typedef short halfword_t;
 typedef int word_t;
 typedef char* asciiz_t;
 
-//stack
-typedef std::list<std::string> stack_t;
+//mem
+typedef unsigned int instruction_t; // [op][address] = [0000 0000][0000 0000 0000 0000 0000 0000]
+typedef int data_t; // [address] = [0000 0000 0000 0000 0000 0000 0000 0000] we can check for null to get full stuff
+
+typedef unsigned int mem_t; // what an address is
 
 //registers
-typedef std::string reg_t;
-
-//what memory is address and alias as could have X as the address alias
-struct memoryAddress_s {
-	unsigned int address;
-	std::string alias;
-};
+typedef int reg_t;
 
 #endif

@@ -1,11 +1,10 @@
 #include <iostream>
 
 #include "console.h"
-#include "../utility/colors.h"
-#include "../machines/accummachine.h"
-#include "../machines/stackmachine.h"
-
-#define default_dir "C:/Users/Ian McPherson/Desktop/CA_PROJECT1-2014-09-02/CA_PROJECT1/assembly_code/"
+#include "colors.h"
+#include "basemachine.h"
+#include "accummachine.h"
+#include "stackmachine.h"
 
 //red text
 ColorText red(ColorText::RED);
@@ -15,8 +14,6 @@ ColorText green(ColorText::GREEN);
 ColorText blue(ColorText::BLUE);
 //default text
 ColorText def(ColorText::DEFAULT);
-
-#define default_file "stack_sim.s"
 
 //maybe more error messages?
 #define input_invalid "ERROR: Invalid command entered. Type help for options. "
@@ -37,7 +34,6 @@ void Console::printHelp() {
 			  << "help\t\t\t display commands\n"
 			  << "open\t\t\t takes a file argument\n"
 			  << "start\t\t\t will execute file\n"
-			  << "default\t\t\t rob's default directory and file\n"
 			  << "dir\t\t\t takes a directory path argument\n"
 			  << "file\t\t\t will display what file is currently being used\n"
 			  << "quit\t\t\t will exit the program\n"
@@ -107,7 +103,6 @@ void Console::parseInput() {
 	//decide what to do based on user input
 	if (_arg0 == "open") {
 		if (m_command.size() > 1) {
-			Memory::clearPrevious();
 			m_fileparser.readFile(_arg1); //read in a file
 		} else {
 			std::cout << input_invalid << need_file << std::endl; //if don't specify file
@@ -118,9 +113,6 @@ void Console::parseInput() {
 		} else {
 			std::cout << input_invalid << need_dir << std::endl;
 		}
-	} else if (_arg0 == "default") {
-		m_fileparser.setDirectory(default_dir);
-		m_fileparser.readFile(default_file);
 	} else if (_arg0 == "file") {
 		if (m_command.size() == 1) {
 				std::cout << m_fileparser.getFilename() << std::endl;
@@ -133,15 +125,11 @@ void Console::parseInput() {
 			std::cout << red << need_args << def << std::endl;
 		}
 		if (_arg1 == "-s" || _arg1 == "--stack") {
-			Memory::copy();
-			Stack_Machine sm;
-			sm.execute();
-			Memory::restore();
+			Base_Machine* sm = new Stack_Machine();
+			sm->execute();
 		} else if (_arg1 == "-a" || _arg1 == "--accum") {
-			Memory::copy();
-			Accum_Machine am;
-			am.execute();
-			Memory::restore();
+			Base_Machine* am = new Accum_Machine();
+			am->execute();
 		} else {
 			std::cout << input_invalid << need_file << std::endl;
 		}

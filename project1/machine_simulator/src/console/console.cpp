@@ -1,10 +1,16 @@
 #include <iostream>
 
 #include "console.h"
+<<<<<<< HEAD
 #include "colors.h"
 #include "basemachine.h"
 #include "accummachine.h"
 #include "stackmachine.h"
+=======
+#include "../utility/colors.h"
+#include "../machines/accummachine.h"
+#include "../machines/stackmachine.h"
+>>>>>>> 13664a27481f662873b957eb1df3581d3ebecd1e
 
 //red text
 ColorText red(ColorText::RED);

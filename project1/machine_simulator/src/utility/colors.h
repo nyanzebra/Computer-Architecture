@@ -15,6 +15,8 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const ColorText& color) { return os << "\033[" << color.code << "m"; }
 	~ColorText() {}
 
+	//function doSomething()
+
 private:
 	Code code;
 };

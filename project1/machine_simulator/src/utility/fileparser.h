@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 // dir: /home/robert/Desktop/CA_PROJECT1/assembly_code
 
@@ -18,14 +19,13 @@ public:
 	void readFile(const std::string& filename);
 	void printContents() const;
 
-	//determine contents
-	void findData();
-	void findInstructions();
-	const std::vector<std::string> findInstructionAndOperand(const std::string& s) const;
-
 	//has data
 	const bool& isEmpty() { return (m_contents.size() > 0) ? false : true; } 
 
+	//accessors
+	const std::string& getFilename() { return m_filename; }
+	
+private:
 	//determine extension
 	std::string getFileExtension(const std::string& filename) {
 
@@ -36,15 +36,22 @@ public:
 		return "";
 	}
 
-	//accessors
-	const std::string& getFilename() { return m_filename; }
+	//determine contents
+	void findData();
+	void findInstructions();
+	const std::vector<std::string> findInstructionAndOperand(const std::string& s) const;
 
 	//memory modifiers
 	void moveToMemory();
-private:
-	std::string m_filename;
-	std::string m_directory;
 
+	//per segment, by file parser
+	void storeData(const std::vector<std::string>& values); //namely used by fileparser
+	void storeInstruction(const std::vector<std::string>& values); //namely used by fileparser
+
+	std::string m_filename; // current file
+	std::string m_directory; //current dir
+
+	std::unordered_map<std::string, int> m_umap_address;
 	std::vector<std::string> m_contents; // will be entire file each [] is a line of the file
 	std::vector<std::string> m_data; // will be [variable][type][datum]
 	std::vector<std::string> m_instructions; // will be [instruction]<optional>[ma_"memory address"] ex: [push][ma_X] 

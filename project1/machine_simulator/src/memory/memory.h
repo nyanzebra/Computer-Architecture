@@ -13,16 +13,9 @@
 #include <vector>
 #include <list>
 #include <iostream>
-#include "../utility/types.h"
-#include "../utility/lambdas.h"
-#include "../logic/logic.h"
-
-//some size definitions.. we will need to add some handlers for this
-//as we do not want our containers to exceed this value
-//this may mean switching to a queue over a vector
-#define max_data_size 5000
-#define max_instruction_size 5000
-#define max_address_size 1500
+#include "types.h"
+#include "lambdas.h"
+#include "logic.h"
 
 class Memory { 
 public:
@@ -30,50 +23,38 @@ public:
 		stackmachine,
 		accummachine,
 	};
-	//store data at certain location can overwrite
-	static void storeData(const memoryAddress_s& mem_addr, const std::list<byte_t>& data); //store variable length 
-	static void storeData(const byte_t* mem_addr, const std::list<byte_t>& data); //store variable length data
-	//store one memory data into another location
-	static void store(const int& begin, const int& end, const std::list<byte_t>& data); // store memory at range begin->end and erase whatever was there before
-	//load data from address
-	static std::list<byte_t> loadData(const byte_t* location); //load exclusively data
-	static std::list<byte_t> loadData(const memoryAddress_s& location); //load exclusively data
-	static std::list<byte_t> loadInstruction(unsigned int& location); //load exclusively instructions
 
-	//clear all memory
-	static void clear() { m_memory_data.clear();} // delete everything
-	//erase a segment
-	static void erase(const int& begin, const int& end); //delets memory at range of begin->end
+	static mem_t m_stack_counter; // points to top of stack
+	static mem_t m_instruction_counter; //points to last instruction address
 
-	static void copy() { *m_data_copy = m_memory_data; };
-	static void restore() {
-		m_memory_data = *m_data_copy; 
-		//m_data_counter=0; 
-		//m_instruction_counter = 0;
-		//m_address_counter = 0; 
-		if (m_memory_instruction.size() == 0) {
-			std::cout << "here is the error";
-			//m_memory_instruction = L_makebyte_tVector(max_instruction_size);
-		}
-}	
-	static void clearPrevious() { m_memory_instruction.clear(); m_memory_data.clear(); m_data_counter = 0; m_instruction_counter=0; m_address_counter=0;}
-	//size
-	static unsigned int& getMemoryInstructionSize() { return m_instruction_counter; } //get size of byte_ts for all instructions
-	static unsigned int& getMemoryDataSize() { return m_data_counter; } //get size of byte_ts for all data
+	static void storeData(const mem_t& mem_addr, const data_t& data); //store data into memory
+	static void storeInstruction(const mem_t& mem_addr, const instruction_t& data); // store instruction into memory
+	static data_t loadData(const mem_t& location); //load exclusively data
+	static data_t loadStack(const mem_t& location); //load exclusively data
+	static instruction_t loadInstruction(const mem_t& location); //load exclusively instructions
 
-	//per segment, by file parser
-	static void storeData(const std::vector<std::string>& values); //namely used by fileparser
-	static void storeInstruction(const std::vector<std::string>& values); //namely used by fileparser
+	static void clear() { m_memory.clear(); } // delete everything
+	static void erase(const mem_t& begin, const mem_t& end); //delets memory at range of begin->end
+
+	static const data_t topStack() { return m_memory[m_stack_counter - 1]; } //get back of stack
+	static void popStack() { //just remove the top of stack
+		m_memory[m_stack_counter - 1] = NULL;
+		m_stack_counter--;
+	}
+	static void popStack(const mem_t& addr) { // put data from stack into addr remove top of stack
+		m_memory[addr] = loadStack(m_stack_counter - 1);
+		m_memory[m_stack_counter] = NULL;
+		m_stack_counter--;
+	} 
+	static void pushStackAddr(const mem_t& addr) {// push data onto stack
+		m_memory[m_stack_counter] = loadData(addr);
+		m_stack_counter++;
+	} 
+	static void pushStackData(const data_t& data) {// push data onto stack
+		m_memory[m_stack_counter] = data;
+		m_stack_counter++;
+	}
 
 private:
-	//segmented memory, data, instruction
-	static std::vector<byte_t>* m_data_copy;
-	static std::vector<byte_t> m_memory_data;
-	static std::vector<byte_t> m_memory_instruction;
-	static std::vector<memoryAddress_s> m_addresses;
-
-	//pointers
-	static unsigned int m_data_counter;
-	static unsigned int m_instruction_counter;
-	static unsigned int m_address_counter;
+	static std::vector<data_t> m_memory; //memory data structure
 };

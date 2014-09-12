@@ -1,11 +1,12 @@
 #include <iostream>
 
 #include "console.h"
-#include "../utility/colors.h"
-#include "../machines/accummachine.h"
-#include "../machines/stackmachine.h"
+#include "colors.h"
+#include "basemachine.h"
+#include "accummachine.h"
+#include "stackmachine.h"
 
-#define default_dir "C:/Users/Ian McPherson/Desktop/CA_PROJECT1-2014-09-02/CA_PROJECT1/assembly_code/"
+#define default_dir "C:/Users/Robert/Documents/GitHub/Computer-Architecture/project1/assembly_code/"
 
 //red text
 ColorText red(ColorText::RED);
@@ -107,7 +108,6 @@ void Console::parseInput() {
 	//decide what to do based on user input
 	if (_arg0 == "open") {
 		if (m_command.size() > 1) {
-			Memory::clearPrevious();
 			m_fileparser.readFile(_arg1); //read in a file
 		} else {
 			std::cout << input_invalid << need_file << std::endl; //if don't specify file
@@ -133,15 +133,11 @@ void Console::parseInput() {
 			std::cout << red << need_args << def << std::endl;
 		}
 		if (_arg1 == "-s" || _arg1 == "--stack") {
-			Memory::copy();
-			Stack_Machine sm;
-			sm.execute();
-			Memory::restore();
+			Base_Machine* sm = new Stack_Machine();
+			sm->execute();
 		} else if (_arg1 == "-a" || _arg1 == "--accum") {
-			Memory::copy();
-			Accum_Machine am;
-			am.execute();
-			Memory::restore();
+			Base_Machine* am = new Accum_Machine();
+			am->execute();
 		} else {
 			std::cout << input_invalid << need_file << std::endl;
 		}

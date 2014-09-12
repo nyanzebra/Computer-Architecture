@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 
-#include "types.h"
+#include "../utility/types.h"
 
 class Logic {
 public:

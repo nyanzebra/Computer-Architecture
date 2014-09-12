@@ -13,9 +13,9 @@
 #include <vector>
 #include <list>
 #include <iostream>
-#include "types.h"
-#include "lambdas.h"
-#include "logic.h"
+#include "../utility/types.h"
+#include "../utility/lambdas.h"
+#include "../logic/logic.h"
 
 class Memory { 
 public:

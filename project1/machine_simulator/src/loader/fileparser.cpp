@@ -1,30 +1,9 @@
 #include <fstream>
 #include <iostream>
 
-#include "logic.h"
-#include "memory.h"
+#include "../logic/logic.h"
+#include "../memory/memory.h"
 #include "fileparser.h"
-
-void FileParser::readFile() {
-	m_contents.clear();
-	
-	if (m_filename.size() <= 0) { //obviously
-		return;
-	}
-
-	m_filename = m_directory + m_filename; //set path
-	std::ifstream input(m_filename, std::ifstream::in);
-
-	for (std::string line; getline(input, line);) {
-		m_contents.push_back(line);
-	}
-
-	findData(); //get all the data
-	findInstructions(); //get all the instructions
-	moveToMemory(); //move them to memory
-
-	input.close(); //close file
-}
 
 void FileParser::readFile(const std::string& filename) {
 	m_contents.clear();

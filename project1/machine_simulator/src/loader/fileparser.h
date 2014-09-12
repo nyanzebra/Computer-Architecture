@@ -10,12 +10,10 @@ class FileParser {
 public:
 	//constructors
 	FileParser() {}
-	FileParser(const std::string& filename) : m_filename(filename) {}
 	~FileParser() {}
 	
 	//file handlers
 	void setDirectory(const std::string& dir) { m_directory = dir; }
-	void readFile();
 	void readFile(const std::string& filename);
 	void printContents() const;
 

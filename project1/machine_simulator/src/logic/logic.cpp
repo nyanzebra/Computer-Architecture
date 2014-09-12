@@ -1,8 +1,9 @@
 #include <iostream>
 
 #include "logic.h"
-#include "accummachine.h"
-#include "stackmachine.h"
+#include "../memory/memory.h"
+#include "../machine/accummachine.h"
+#include "../machine/stackmachine.h"
 
 std::unordered_map<int, std::string>* Logic::m_hash_strings = new std::unordered_map<int, std::string>();
 

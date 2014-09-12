@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "fileparser.h"
+#include "../loader/fileparser.h"
 
 class Console { //singleton
 public:

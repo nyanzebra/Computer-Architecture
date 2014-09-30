@@ -29,7 +29,7 @@ main:
 	la $2, string_space	# we need to move B to the end
 
 length_loop:			# length of the string
-	lb $3, ($2)		# load the byte at addr B into $t3.
+	lb $3, $2, 0		# load the byte at addr B into $t3.
 	beqz $3, end_length_loop # if $t3 == 0, branch out of loop.
 
 	addi $2, $2, 1	# otherwise, increment B,
@@ -43,8 +43,8 @@ end_length_loop:
 test_loop:
 	bge $1, $2, is_palin	# if A >= B, it's a palindrome.
 
-	lb $3, ($1)		# load the byte at addr A into $t3,
-	lb $4, ($2)		# load the byte at addr B into $t4.
+	lb $3, $1, 0		# load the byte at addr A into $t3,
+	lb $4, $2, 0		# load the byte at addr B into $t4.
 	bne $3, $4, not_palin # if $t3 != $t4, not a palindrome.
 
 # Otherwise,

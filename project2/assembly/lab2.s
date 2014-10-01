@@ -36,7 +36,7 @@ length_loop:			# length of the string
 	b length_loop		# and repeat the loop.
 
 end_length_loop:
-	subi $2, $2, 2	# subtract 2 to move B back past
+	subi $2, $2, 1	# subtract 1 to move B back past
 
 # the '\0' and '\n'.
 

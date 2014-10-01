@@ -10,11 +10,11 @@
 #define TYPES_H
 
 #define MIN_SEGMENT_INSTRUCTION 0 // begin
-#define MAX_SEGMENT_INSTRUCTION 99 // end
-#define MIN_SEGMENT_DATA 100 //begin 
-#define MAX_SEGMENT_DATA 200// end
-#define MIN_SEGMENT_STACK 201 // begin
-#define MAX_SEGMENT_STACK 256 // end
+#define MAX_SEGMENT_INSTRUCTION 4095 // end
+#define MIN_SEGMENT_DATA 4096 //begin 
+#define MAX_SEGMENT_DATA 4096 + 1023// end
+#define MIN_SEGMENT_STACK 4096 + 1024  // begin
+#define MAX_SEGMENT_STACK 4096 + 1024 + 256// end
 
 //data types in memory
 typedef int word_t;

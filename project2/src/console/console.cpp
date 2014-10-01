@@ -3,7 +3,7 @@
 #include "console.h"
 
 #include "../utility/colors.h"
-#include "../machine/accummachine.h"
+#include "../machine/generalpurposeregistermachine.h"
 
 //red text
 ColorText red(ColorText::RED);
@@ -26,9 +26,6 @@ bool Console::m_continue = false;
 //initial display
 void Console::printHelp() {
 	std::cout << "\nWelcome to machine simulator!\n\n"
-			  << "arguments:\n"
-			  << "-s --stack\t\t implement stack machine used with start command\n"
-			  << "-a --accum\t\t implement accumulator machine used with start command\n"
 			  << "commands:\n"
 			  << "help\t\t\t display commands\n"
 			  << "open\t\t\t takes a file argument\n"
@@ -106,6 +103,11 @@ void Console::parseInput() {
 		} else {
 			std::cout << input_invalid << need_file << std::endl; //if don't specify file
 		}
+	} else if (_arg0 == "test") {
+		m_fileparser.setDirectory("c:/Users/Robert/Documents/GitHub/Computer-Architecture/project2/assembly/");
+		m_fileparser.readFile("lab2.s");
+		Base_Machine* am = new GPR_Machine();
+		am->execute();
 	} else if (_arg0 == "dir") {
 		if (m_command.size() == 2) {
 			m_fileparser.setDirectory(_arg1);
@@ -121,13 +123,18 @@ void Console::parseInput() {
 		} 
 	} else if (_arg0 == "start" && !m_fileparser.isEmpty()) {
 		if (m_command.size() == 1) {
-			std::cout << red << need_args << def << std::endl;
-		}
-		if (_arg1 == "-a" || _arg1 == "--accum") {
-			Base_Machine* am = new Accum_Machine();
+			Base_Machine* am = new GPR_Machine();
 			am->execute();
 		} else {
 			std::cout << input_invalid << need_file << std::endl;
+		}
+	} else if (_arg0 == "cycle") {
+		if (m_command.size() == 1) {
+			std::cout << red << need_args << def << std::endl;
+		} else if (m_command.size() != 2) {
+			std::cout << red << too_many_args << def << std::endl;
+		} else {
+			Base_Machine::setMulticyle(std::stoi(m_command[1])); //set multicyle status
 		}
 	} else if (_arg0 == "help") {
 		printHelp();

@@ -34,22 +34,14 @@ const int getJType(const instruction_t& instr) {
 	return value;
 };
 
-
 std::unordered_map<int, std::function<int()>> umap_opcodeGroups;
-
-
-int opcodeFunction(const instruction_t& instruction) {
-	int opcode = instruction >> 26 ;
-	instr = instruction;
-	return umap_opcodeGroups[opcode]();
-}
 
 int addImmediate() {
 	std::array<int, 3> values = getIType(instr);
-	int tmp = Logic::add(GPR_Machine::getReg(values[1]), values[2]);
-	GPR_Machine::setReg(values[0], tmp);
+	int tmp = Logic::add(GPR_Machine::getReg(values[0]), values[2]);
+	GPR_Machine::setReg(values[1], tmp);
 
-	if (Base_Machine::isMulticycle()) 
+	if (Base_Machine::isMulticycle())
 		return 6;
 	else
 		return 1;
@@ -57,8 +49,8 @@ int addImmediate() {
 
 int subtractImmediate() {
 	std::array<int, 3> values = getIType(instr);
-	int tmp = Logic::sub(GPR_Machine::getReg(values[1]), values[2]);
-	GPR_Machine::setReg(values[0], tmp);
+	int tmp = Logic::sub(GPR_Machine::getReg(values[0]), values[2]);
+	GPR_Machine::setReg(values[1], tmp);
 
 	if (Base_Machine::isMulticycle())
 		return 6;
@@ -68,7 +60,7 @@ int subtractImmediate() {
 
 int loadAscii() {
 	std::array<int, 3> values = getIType(instr);
-	GPR_Machine::setReg(values[0], values[2]);
+	GPR_Machine::setReg(values[1], values[2]);
 
 	if (Base_Machine::isMulticycle())
 		return 5;
@@ -78,7 +70,7 @@ int loadAscii() {
 
 int loadImmediate() {
 	std::array<int, 3> values = getIType(instr);
-	GPR_Machine::setReg(values[0], values[2]);
+	GPR_Machine::setReg(values[1], values[2]);
 
 	if (Base_Machine::isMulticycle())
 		return 3;
@@ -88,8 +80,8 @@ int loadImmediate() {
 
 int loadByte() {
 	std::array<int, 3> values = getIType(instr);
-	int tmp = Logic::add(GPR_Machine::getReg(values[1]), values[2]);
-	GPR_Machine::setReg(values[0], tmp);
+	int tmp = Logic::add(GPR_Machine::getReg(values[0]), values[2]);
+	GPR_Machine::setReg(values[1], tmp);
 
 	if (Base_Machine::isMulticycle())
 		return 6;
@@ -99,8 +91,8 @@ int loadByte() {
 
 int loadWord() {
 	std::array<int, 3> values = getIType(instr);
-	int tmp = Logic::add(GPR_Machine::getReg(values[1]), values[2]);
-	GPR_Machine::setReg(values[0], tmp);
+	int tmp = Logic::add(GPR_Machine::getReg(values[0]), values[2]);
+	GPR_Machine::setReg(values[1], tmp);
 
 	if (Base_Machine::isMulticycle())
 		return 6;
@@ -112,6 +104,8 @@ int branch() {
 	int value = getJType(instr);
 	Base_Machine::setPC(value);
 
+	Memory;
+
 	if (Base_Machine::isMulticycle())
 		return 4;
 	else
@@ -120,8 +114,9 @@ int branch() {
 
 int branchEqualZero() {
 	std::array<int, 3> values = getIType(instr);
-	if (values[0] == 0)
+	if (Memory::loadData(GPR_Machine::getReg(values[1])) == 0) {
 		Base_Machine::setPC(values[2]);
+	}
 
 	if (Base_Machine::isMulticycle())
 		return 5;
@@ -131,7 +126,7 @@ int branchEqualZero() {
 
 int branchGreaterEqual() {
 	std::array<int, 3> values = getIType(instr);
-	if (values[0] >= values[1])
+	if (GPR_Machine::getReg(values[1]) >= GPR_Machine::getReg(values[0]))
 		Base_Machine::setPC(values[2]);
 
 	if (Base_Machine::isMulticycle())
@@ -142,7 +137,7 @@ int branchGreaterEqual() {
 
 int branchNotEqual() {
 	std::array<int, 3> values = getIType(instr);
-	if (values[0] != values[1])
+	if (Memory::loadData(GPR_Machine::getReg(values[1])) != Memory::loadData(GPR_Machine::getReg(values[0])))
 		Base_Machine::setPC(values[2]);
 
 	if (Base_Machine::isMulticycle())
@@ -162,18 +157,20 @@ int syscall() {
 		int size = GPR_Machine::getReg(31);
 		int counter = 0;
 		input.substr(0, size);
-		// TO DO: hash string, put into memory
-	}
-	else if (GPR_Machine::getReg(29) == 4) {
-		if (Logic::m_hash_strings->find(GPR_Machine::getReg(30)) != Logic::m_hash_strings->end()) {
-			std::string s = Logic::m_hash_strings->find(GPR_Machine::getReg(30))-> second;
+
+		for (char c : input) {
+			Memory::storeData(address, c);
+			address++;
+		}
+	} else if (GPR_Machine::getReg(29) == 4) {
+		if (Logic::m_hash_strings->find(Memory::loadData(GPR_Machine::getReg(30))) != Logic::m_hash_strings->end()) {
+			std::string s = Logic::m_hash_strings->find(Memory::loadData(GPR_Machine::getReg(30)))->second;
 			if (!s.empty()) {
 				std::cout << s;
 			}
 		}
-	}
-	else if (GPR_Machine::getReg(29) == 10) {
-		// exit is handled alreeady due to logic check in basemachine.cpp
+	} else if (GPR_Machine::getReg(29) == 10) {
+		// exit is handled already due to logic check in basemachine.cpp
 	}
 
 	if (Base_Machine::isMulticycle())
@@ -183,16 +180,25 @@ int syscall() {
 }
 
 void initUMapOpcodeGroup() {
-	umap_opcodeGroups.insert(0x0, addImmediate());
-	umap_opcodeGroups.insert(0x1, subtractImmediate());
-	umap_opcodeGroups.insert(0x2, loadImmediate());
-	umap_opcodeGroups.insert(0x3, loadWord());
-	umap_opcodeGroups.insert(0x4, loadAscii());
-	umap_opcodeGroups.insert(0x5, loadByte());
-	umap_opcodeGroups.insert(0x6, branchEqualZero());
-	umap_opcodeGroups.insert(0x7, branch());
-	umap_opcodeGroups.insert(0x8, branchGreaterEqual());
-	umap_opcodeGroups.insert(0x9, branchNotEqual());
-	umap_opcodeGroups.insert(0xA, syscall());
+	umap_opcodeGroups.insert({ 0x0, addImmediate });
+	umap_opcodeGroups.insert({ 0x1, subtractImmediate });
+	umap_opcodeGroups.insert({ 0x2, loadImmediate });
+	umap_opcodeGroups.insert({ 0x3, loadWord });
+	umap_opcodeGroups.insert({ 0x4, loadAscii });
+	umap_opcodeGroups.insert({ 0x5, loadByte });
+	umap_opcodeGroups.insert({ 0x6, branchEqualZero });
+	umap_opcodeGroups.insert({ 0x7, branch });
+	umap_opcodeGroups.insert({ 0x8, branchGreaterEqual });
+	umap_opcodeGroups.insert({ 0x9, branchNotEqual });
+	umap_opcodeGroups.insert({ 0xA, syscall });
+}
+
+int opcodeFunction(const instruction_t& instruction) {
+	if (umap_opcodeGroups.size() == 0) { //just in case it is not init
+		initUMapOpcodeGroup();
+	}
+	int opcode = instruction >> 26;
+	instr = instruction;
+	return umap_opcodeGroups[opcode]();
 }
 #endif

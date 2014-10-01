@@ -32,7 +32,7 @@ public:
 	static data_t loadStack(const mem_t& location); //load exclusively data
 	static instruction_t loadInstruction(const mem_t& location); //load exclusively instructions
 
-	static void clear() { m_memory.clear(); } // delete everything
+	static void clear() { m_memory.clear(); m_instruction_counter = 0; } // delete everything
 	static void erase(const mem_t& begin, const mem_t& end); //delets memory at range of begin->end
 
 	static const data_t topStack() { return m_memory[m_stack_counter - 1]; } //get back of stack

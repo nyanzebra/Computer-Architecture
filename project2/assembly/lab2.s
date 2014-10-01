@@ -16,7 +16,7 @@
 ## $30 - syscall parameters.
 ## $31 - syscall parameters.
 
-	.text
+.text
 main:
 	
 ## read the string S:
@@ -29,22 +29,22 @@ main:
 	la $2, string_space	# we need to move B to the end
 
 length_loop:			# length of the string
-	lb $3, ($2)		# load the byte at addr B into $t3.
+	lb $3, $2, 0		# load the byte at addr B into $t3.
 	beqz $3, end_length_loop # if $t3 == 0, branch out of loop.
 
 	addi $2, $2, 1	# otherwise, increment B,
 	b length_loop		# and repeat the loop.
 
 end_length_loop:
-	subi $2, $2, 2	# subtract 2 to move B back past
+	subi $2, $2, 1	# subtract 1 to move B back past
 
 # the '\0' and '\n'.
 
 test_loop:
 	bge $1, $2, is_palin	# if A >= B, it's a palindrome.
 
-	lb $3, ($1)		# load the byte at addr A into $t3,
-	lb $4, ($2)		# load the byte at addr B into $t4.
+	lb $3, $1, 0		# load the byte at addr A into $t3,
+	lb $4, $2, 0		# load the byte at addr B into $t4.
 	bne $3, $4, not_palin # if $t3 != $t4, not a palindrome.
 
 # Otherwise,
@@ -71,7 +71,7 @@ exit:				# exit the program
 	syscall			# make the system call.
 
 
-	.data
+.data
 is_palin_msg: .asciiz "The string is a palindrome.\n"
 not_palin_msg: .asciiz "The string is not a palindrome.\n"
 string_space: .space 1024	# reserve 1024 bytes for the string.

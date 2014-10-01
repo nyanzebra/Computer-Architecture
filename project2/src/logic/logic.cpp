@@ -1,11 +1,9 @@
 #include <iostream>
 #include <array>
 
-
 #include "logic.h"
 #include "../memory/memory.h"
 #include "../machine/accummachine.h"
-#include "../utility/functionInterface.h"
 
 std::unordered_map<int, std::string>* Logic::m_hash_strings = new std::unordered_map<int, std::string>();
 

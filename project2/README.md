@@ -24,7 +24,7 @@ Type in command line "./gprmachine"
 
 type help for list of commands.
 
-Example Input While Running The Machines:
+Example Input While Running The Machine:
 -----------------------------------------
 
 dir /PATH_TO_.S_CODE/ (working directory, must end with '/')

@@ -3,7 +3,6 @@
 
 #include "logic.h"
 #include "../memory/memory.h"
-#include "../machine/accummachine.h"
 
 std::unordered_map<int, std::string>* Logic::m_hash_strings = new std::unordered_map<int, std::string>();
 
@@ -20,7 +19,6 @@ const int Logic::sub(const int &a, const int &b) {
 const int Logic::div(const int &a, const int &b) {
 	return a / b;
 }
-
 
 const int Logic::mult(const int &a, const int &b) {
 	return a * b;

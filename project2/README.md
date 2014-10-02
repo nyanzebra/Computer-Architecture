@@ -29,6 +29,6 @@ Example Input While Running The Machine:
 
 dir /PATH_TO_.S_CODE/ (working directory, must end with '/')
 
-open lab2.s (actual assembly file, must end with .s)
+open palindrome.s (actual assembly file, must end with .s)
 
 start (executes the assembly loaded)

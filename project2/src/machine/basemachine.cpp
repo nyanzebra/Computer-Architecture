@@ -10,6 +10,8 @@ int Base_Machine::m_num_cycles = 0;
 
 void Base_Machine::execute() {
 	m_program_counter = MIN_SEGMENT_INSTRUCTION;
+	m_num_instructions = 0;
+	m_num_cycles = 0;
 
 	while (m_program_counter != Memory::m_instruction_counter) {
 		getNextInstruction();

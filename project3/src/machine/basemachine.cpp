@@ -7,6 +7,7 @@ int Base_Machine::m_num_instructions = 0;
 int Base_Machine::m_program_counter = 0;
 bool Base_Machine::multicycle = false;
 int Base_Machine::m_num_cycles = 0;
+int Base_Machine::m_nop_counter = 0;
 
 void Base_Machine::execute() {
 	m_program_counter = MIN_SEGMENT_INSTRUCTION;
@@ -22,6 +23,7 @@ void Base_Machine::execute() {
 	std::cout << "Number of Instructions: " << m_num_instructions << std::endl;
 	std::cout << "Number of Cycles: " << m_num_cycles << std::endl;
 	std::cout << "Speed up: " << ((8 * m_num_instructions) / (float)m_num_cycles) << std::endl;
+	std::cout << "Number of nop's in code: " << m_nop_counter << std::endl;
 }
 
 void Base_Machine::getNextInstruction() {

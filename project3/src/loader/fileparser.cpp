@@ -116,6 +116,7 @@ void FileParser::moveToMemory() {
 	bool is_instruction = false;
 
 	Memory::clear(); // clear memory
+	Base_Machine::clear();
 
 	storeData(m_data); //move to data
 	m_data.clear(); //delete the data collection
@@ -225,6 +226,7 @@ void FileParser::storeInstruction(std::vector<std::string>& instructions) {
 			}
 		} else if (m_umap_jfunctions.find(*it) != m_umap_jfunctions.end()) {
 			if (*it == "nop") {
+				Base_Machine::incrementNopCount();
 				instruction_t instr = m_umap_jfunctions.find(*it)->second << 26;
 				storeInstructionHelper(*it, instr);
 			} else {

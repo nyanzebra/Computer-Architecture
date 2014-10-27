@@ -68,6 +68,9 @@ const latch_execute_memory executeInstruction() {
 		latch_decode_execute_old.op_B = latch_memory_writeback_new.alu_out;
 	}
 	if (latch_decode_execute_old.opcode != -1) {
+		if (latch_decode_execute_old.opcode == 31) {
+			Base_Machine::incrementNopCount();
+		}
 		umap_opcodeGroups[latch_decode_execute_old.opcode]();
 	}
 	latch_execute_memory new_execute_memory;

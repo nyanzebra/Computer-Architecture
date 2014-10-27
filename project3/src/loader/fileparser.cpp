@@ -221,7 +221,7 @@ void FileParser::storeInstruction(std::vector<std::string>& instructions) {
 			if (*it == "syscall") {
 				storeInstructionHelper(*it, m_umap_rfunctions.find(*it)->second << 26);
 			} else {
-				instruction_t instr = m_umap_rfunctions.find(*it)->second | std::stoi(*(++it)) << 11 | std::stoi(*(++it)) << 21 | std::stoi(*(++it)) << 16 | std::stoi(*(++it)) << 6;
+				instruction_t instr = m_umap_rfunctions.find(*it)->second << 26 | std::stoi(*(++it)) << 11 | std::stoi(*(++it)) << 16 | std::stoi(*(++it)) << 21;
 				storeInstructionHelper(*it, instr);
 			}
 		} else if (m_umap_jfunctions.find(*it) != m_umap_jfunctions.end()) {

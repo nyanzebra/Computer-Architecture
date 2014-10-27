@@ -25,6 +25,7 @@ public:
 		m_umap_ifunctions3param.insert({ "addi", 0xA });
 		m_umap_ifunctions3param.insert({ "subi", 0xB });
 		m_umap_rfunctions.insert({ "syscall", 0x0 });
+		m_umap_rfunctions.insert({ "add", 0x2 });
 		m_umap_jfunctions.insert({ "b", 0x1E });
 		m_umap_ifunctions3param.insert({ "bge", 0x1C });
 		m_umap_ifunctions2param.insert({ "beqz", 0x1B });

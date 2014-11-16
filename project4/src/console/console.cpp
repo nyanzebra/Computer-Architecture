@@ -2,17 +2,7 @@
 
 #include "console.h"
 
-#include "../utility/colors.h"
 #include "../machine/generalpurposeregistermachine.h"
-
-//red text
-ColorText red(ColorText::RED);
-//green text
-ColorText green(ColorText::GREEN);
-//blue text
-ColorText blue(ColorText::BLUE);
-//default text
-ColorText def(ColorText::DEFAULT);
 
 //maybe more error messages?
 #define input_invalid "ERROR: Invalid command entered. Type help for options. "
@@ -100,6 +90,7 @@ void Console::parseInput() {
 	if (_arg0 == "open") {
 		if (m_command.size() > 1) {
 			m_fileparser.readFile(_arg1); //read in a file
+			m_compiler.compile(); //compiles the assembly
 		} else {
 			std::cout << input_invalid << need_file << std::endl; //if don't specify file
 		}
@@ -107,7 +98,7 @@ void Console::parseInput() {
 		m_fileparser.setDirectory("C:/Users/Robert/Documents/GitHub/Computer-Architecture/project3/assembly/");
 		m_fileparser.readFile("palindrome.s");
 		Base_Machine* am = new GPR_Machine();
-		am->execute();
+		am->begin();
 	} else if (_arg0 == "dir") {
 		if (m_command.size() == 2) {
 			m_fileparser.setDirectory(_arg1);
@@ -124,17 +115,9 @@ void Console::parseInput() {
 	} else if (_arg0 == "start" && !m_fileparser.isEmpty()) {
 		if (m_command.size() == 1) {
 			Base_Machine* am = new GPR_Machine();
-			am->execute();
+			am->begin();
 		} else {
 			std::cout << input_invalid << need_file << std::endl;
-		}
-	} else if (_arg0 == "cycle") {
-		if (m_command.size() == 1) {
-			std::cout << red << need_args << def << std::endl;
-		} else if (m_command.size() != 2) {
-			std::cout << red << too_many_args << def << std::endl;
-		} else {
-			Base_Machine::setMulticyle(std::stoi(m_command[1])); //set multicyle status
 		}
 	} else if (_arg0 == "help") {
 		printHelp();

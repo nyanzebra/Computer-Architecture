@@ -1,7 +1,7 @@
 #include "memory.h"
 
 //initialize containers
-std::vector<data_t> Memory::m_memory = L_makedata_tVector(MAX_SEGMENT_DATA + MAX_SEGMENT_INSTRUCTION + MAX_SEGMENT_STACK);
+std::vector<data_t> Memory::m_memory(MAX_SEGMENT_DATA + MAX_SEGMENT_INSTRUCTION + MAX_SEGMENT_STACK);
 
 //initialize counters
 unsigned int Memory::m_instruction_counter = 0;
@@ -36,7 +36,7 @@ void Memory::erase(const mem_t& begin, const mem_t& end) {
 
 void Memory::storeData(const mem_t& addr, const data_t& data) {
 	if (m_memory.size() == 0) { // a check to see if memory has been initialized
-		m_memory = L_makedata_tVector(MAX_SEGMENT_DATA + MAX_SEGMENT_INSTRUCTION + MAX_SEGMENT_STACK);
+		m_memory = std::vector<data_t>(MAX_SEGMENT_DATA + MAX_SEGMENT_INSTRUCTION + MAX_SEGMENT_STACK);
 	}
 	if (addr < MIN_SEGMENT_DATA || addr > MAX_SEGMENT_DATA) { // bad address
 		return; //nothing happens
@@ -50,7 +50,7 @@ void Memory::storeInstruction(const mem_t& addr, const instruction_t& instructio
 		return; // nothing happens...
 	}
 	if (m_memory.size() == 0) {
-		m_memory = L_makedata_tVector(MAX_SEGMENT_DATA + MAX_SEGMENT_INSTRUCTION + MAX_SEGMENT_STACK);
+		m_memory = std::vector<data_t>(MAX_SEGMENT_DATA + MAX_SEGMENT_INSTRUCTION + MAX_SEGMENT_STACK);
 	}
 	m_memory[addr] = instruction;
 }

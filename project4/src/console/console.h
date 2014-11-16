@@ -10,17 +10,15 @@
 #include <string>
 #include <vector>
 
-#include "../loader/fileparser.h"
+#include "../compiler/compiler.h"
+#include "../fileio/fileparser.h"
 
 class Console { //singleton
 public:
 
 	static Console& instance() {//always returns a new instance
-
 		static Console instance;
-
 		m_continue = true;
-		
 		return instance;
 	}
 
@@ -32,14 +30,14 @@ public:
 	//input
 	void parseInput();//figure out what command user wants
 private:
-	//no touchy!!!
-	Console() {};
+	Console() {}
 	Console(Console const&);
 	void operator=(Console const&);
 
 	std::vector<std::string> m_command; //vector of user input
 
 	FileParser m_fileparser; //handler for file io
+	Compiler m_compiler;
 
 	static bool m_continue; //determines whether console program should continue
 };

@@ -14,7 +14,6 @@
 #include <list>
 #include <iostream>
 #include "../utility/types.h"
-#include "../utility/lambdas.h"
 #include "../logic/logic.h"
 
 class Memory { 

@@ -2,6 +2,7 @@
 
 #include "basemachine.h"
 
+
 //init static variables
 int Base_Machine::m_num_instructions = 0;
 int Base_Machine::m_program_counter = 0;
@@ -9,7 +10,7 @@ bool Base_Machine::multicycle = false;
 int Base_Machine::m_num_cycles = 0;
 int Base_Machine::m_nop_counter = 0;
 
-void Base_Machine::execute() {
+void Base_Machine::begin() {
 	m_program_counter = MIN_SEGMENT_INSTRUCTION;
 	m_num_instructions = 0;
 	m_num_cycles = 0;
@@ -35,5 +36,4 @@ void Base_Machine::execute() {
 
 void Base_Machine::getNextInstruction() {
 	m_current_instruction = Memory::loadInstruction(m_program_counter);
-	m_program_counter++;
 }

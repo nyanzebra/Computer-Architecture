@@ -1,11 +1,8 @@
-#include <fstream>
-#include <iostream>
 #include <algorithm>
 
-#include "../logic/logic.h"
+#include "compiler.h"
 #include "../memory/memory.h"
-#include "fileparser.h"
-#include "../machine/generalpurposeregistermachine.h"
+#include "../machine/basemachine.h"
 
 //bad characters
 bool isBadCharacter(char c) {
@@ -17,34 +14,21 @@ bool isBadCharacter(char c) {
 	}
 }
 
-void FileParser::readFile(const std::string& filename) {
-	m_contents.clear();
-	if (filename.size() <= 0) { //obviously
-		return;
-	}
+void Compiler::moveToMemory() {
+	bool is_data = false;
+	bool is_instruction = false;
 
-	m_filename = m_directory + filename;//set path
+	Memory::clear(); // clear memory
+	Base_Machine::clear();
 
-	std::ifstream input(m_directory + filename, std::ifstream::in);
+	storeData(m_data); //move to data
+	m_data.clear(); //delete the data collection
 
-	for (std::string line; getline(input, line);) {
-		m_contents.push_back(line);
-	}
-
-	findData(); //get all the data
-	findInstructions(); //get all the instructions
-	moveToMemory(); //move them to memory
-
-	input.close(); //close file
+	storeInstruction(m_instructions);//move to instructions
+	m_instructions.clear(); //delete the instruction collection
 }
 
-void FileParser::printContents() const { //print file contents
-	for (std::string s : m_contents) {
-		std::cout << s << std::endl;
-	}
-}
-
-void FileParser::findData() {
+void Compiler::findData() {
 	bool read = false;
 	for (std::string s : m_contents) {
 		if (read && s.find(":")) { //push back variable, type, datum
@@ -66,7 +50,7 @@ void FileParser::findData() {
 	}
 }
 
-void FileParser::findInstructions() {
+void Compiler::findInstructions() {
 	bool read = false;
 
 	for (std::string s : m_contents) {
@@ -90,7 +74,7 @@ void FileParser::findInstructions() {
 	}
 }
 
-const std::vector<std::string> FileParser::findInstructionAndOperand(const std::string& s) const {
+const std::vector<std::string> Compiler::findInstructionAndOperand(const std::string& s) const {
 	std::vector<std::string> temp;
 	std::string value;
 
@@ -111,21 +95,7 @@ const std::vector<std::string> FileParser::findInstructionAndOperand(const std::
 	return temp;
 }
 
-void FileParser::moveToMemory() {
-	bool is_data = false;
-	bool is_instruction = false;
-
-	Memory::clear(); // clear memory
-	Base_Machine::clear();
-
-	storeData(m_data); //move to data
-	m_data.clear(); //delete the data collection
-
-	storeInstruction(m_instructions);//move to instructions
-	m_instructions.clear(); //delete the instruction collection
-}
-
-void FileParser::storeData(const std::vector<std::string>& values) {
+void Compiler::storeData(const std::vector<std::string>& values) {
 
 	int d_offset = MIN_SEGMENT_DATA; //begin of data segment
 	for (auto it = values.begin(); it != values.end(); ++it) { //for all the data place them in memory correctly
@@ -148,8 +118,10 @@ void FileParser::storeData(const std::vector<std::string>& values) {
 			if (it->find("\\n") != std::string::npos) {
 				s.replace(s.find("\\n"), 2, "\n");
 			}
-			Logic::m_hash_strings->insert({ 0x80000000 | d_offset, s.substr(1, s.size() - 2) }); //goal is to hash all ascii strings
-			Memory::storeData(d_offset++, 0x80000000 | d_offset); //then retrieve them by unhashing...
+			for (char c : s) {
+				Memory::storeData(d_offset++, c); //then retrieve them by unhashing...
+			}
+			d_offset++;
 		} else if (*it == ".space") {
 			++it;
 			d_offset += std::stoi(*it); // allocate free space
@@ -157,25 +129,30 @@ void FileParser::storeData(const std::vector<std::string>& values) {
 	}
 }
 
-void FileParser::storeInstruction(std::vector<std::string>& instructions) {
-
-	Memory::machine type; // this is used as indicator to determine what machine instructions to use
+void Compiler::storeInstruction(std::vector<std::string>& instructions) {
 	int instruction_offset = MIN_SEGMENT_INSTRUCTION; // begin of instruction segment
 	std::unordered_map<std::string, int> options =
 	{
-		{ "la", 14 },
-		{ "li", 12 },
-		{ "lb", 15 },
-		{ "lw", 13 },
-		{ "addi", 10 },
-		{ "subi", 11 },
 		{ "syscall", 0 },
 		{ "add", 2 },
-		{ "nop", 31 },
-		{ "b", 30 },
-		{ "bge", 28 },
+		{ "fadd", 3 },
+		{ "fsub", 4 },
+		{ "fmul", 5 },
+
+		{ "addi", 10 },
+		{ "subi", 11 },
+		{ "li", 12 },
+		{ "lw", 13 },
+		{ "la", 14 },
+		{ "lb", 15 },
+		{ "ld", 16 },
+		{ "sd", 17 },
+
 		{ "beqz", 27 },
-		{ "bne", 29 }
+		{ "bge", 28 },
+		{ "bne", 29 },
+		{ "b", 30 },
+		{ "nop", 31 },
 	};
 	//sub: label
 	//replace sub: with instruction_offset
@@ -183,7 +160,7 @@ void FileParser::storeInstruction(std::vector<std::string>& instructions) {
 	//offset -------->offset
 	//loop through and replace label with offset
 	int counter = 0;
-	for (int i = 0; i < instructions.size(); ++i) {
+	for (unsigned i = 0; i < instructions.size(); ++i) {
 		if (options.find(instructions[i]) != options.end()) {
 			counter++;
 		}
@@ -191,7 +168,7 @@ void FileParser::storeInstruction(std::vector<std::string>& instructions) {
 		if (instructions[i].find(":") != std::string::npos) {
 			instructions[i].erase(std::remove_if(instructions[i].begin(), instructions[i].end(), &isBadCharacter), instructions[i].end());
 
-			for (int j = 0; j < instructions.size(); ++j) {
+			for (unsigned j = 0; j < instructions.size(); ++j) {
 				if (instructions[i].substr(0, instructions[i].size() - 1) == instructions[j]) {
 					instructions[j] = std::to_string(counter);
 				}
@@ -238,7 +215,7 @@ void FileParser::storeInstruction(std::vector<std::string>& instructions) {
 	m_umap_address.clear();
 }
 
-void FileParser::storeInstructionHelper(const std::string& type, const instruction_t& instruction) {
+void Compiler::storeInstructionHelper(const std::string& type, const instruction_t& instruction) {
 	Memory::storeInstruction(Memory::m_instruction_counter, instruction);
 	Memory::m_instruction_counter++;
 }

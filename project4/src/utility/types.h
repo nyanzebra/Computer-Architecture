@@ -29,32 +29,14 @@ typedef unsigned int mem_t; // what an address is
 //registers
 typedef int reg_t;
 
-//latches
-struct latch_fetch_decode {
-	instruction_t current_instruction;
-};
-
-struct latch_decode_execute {
-	int opcode;
-	int rs, rt, rd;
-	int op_A, op_B;
-	int alu_out;
-	int offset;
-};
-
-struct latch_execute_memory {
-	int opcode;
-	int op_B;
-	int alu_out;
-	int rd;
-};
-
-struct latch_memory_writeback {
-	int opcode;
-	int mdr;
-	int op_B;
-	int alu_out;
-	int rd;
-};
+typedef struct Instruction {
+	int opcode = -1, function = -1;
+	int rs = -1, rt = -1, rd = -1;
+	int aluout = -1, mdr = -1;
+	int opA = -1, opB = -1;
+	float faluout = -1, fmdr = -1;
+	float fopA = -1, fopB = -1;
+	int offset = -1, shift = -1;
+} Instruction;
 
 #endif

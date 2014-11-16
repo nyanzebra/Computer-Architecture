@@ -4,9 +4,7 @@
 
 class Base_Machine {
 public:
-	void execute();//goes through all instructions by checking to see if pc == ic
-	static const bool& isMulticycle() { return multicycle; }
-	static void setMulticyle(const bool& b) { multicycle = b; }
+	void begin();//goes through all instructions by checking to see if pc == ic
 	static void setPC(const int& label) { m_program_counter = label; };
 	static void incrementNopCount() { m_nop_counter++; };
 	static void clear() { m_nop_counter = 0; }

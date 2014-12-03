@@ -10,6 +10,8 @@
 void executeFunction(Instruction& instruction);
 
 //determine type
+const bool isFloatType(const int& op);
+
 const bool isRType(const int& op);
 
 const bool isIType(const int& op);
@@ -19,12 +21,6 @@ const bool isJType(const int& op);
 const bool isBranch(const int& opcode);
 
 const bool isLoading(const int& opcode);
-
-//Breaks up the instruction into 4 different values and returns them in an array.
-const std::array<int, 4> getRType(const instruction_t& instr);
-
-//Breaks up the instruction into 3 different values and returns them in an array.
-const std::array<int, 3> getIType(const instruction_t& instr);
 
 //r type add pipeline
 void addR(Instruction& instruction);
@@ -37,6 +33,10 @@ void subI(Instruction& instruction);
 void loadAscii(Instruction& instruction);
 
 void loadByte(Instruction& instruction);
+
+void loadDouble(Instruction& instruction);
+
+void storeDouble(Instruction& instruction);
 
 void insertNOP(Instruction& instruction);
 
@@ -53,6 +53,12 @@ void branchGreaterEqual(Instruction& instruction);
 ////breaks up the instruction into Itype values, then checks to see if the dest register is not equal to source register
 //then jumps if it is.
 void branchNotEqual(Instruction& instruction);
+
+void fadd(Instruction& instruction);
+
+void fmult(Instruction& instruction);
+
+void fsub(Instruction& instruction);
 
 // Syscall has multiple different internal functions.
 // uses registers 29, 30, and 31. 29 is return value / parameter.

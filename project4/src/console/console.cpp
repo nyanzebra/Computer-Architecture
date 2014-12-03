@@ -19,6 +19,7 @@ void Console::printHelp() {
 			  << "commands:\n"
 			  << "help\t\t\t display commands\n"
 			  << "open\t\t\t takes a file argument\n"
+			  << "switch\t\t\t changes funtion units for piping\n"
 			  << "start\t\t\t will execute file\n"
 			  << "dir\t\t\t takes a directory path argument\n"
 			  << "file\t\t\t will display what file is currently being used\n"
@@ -95,10 +96,17 @@ void Console::parseInput() {
 			std::cout << input_invalid << need_file << std::endl; //if don't specify file
 		}
 	} else if (_arg0 == "test") {
-		m_fileparser.setDirectory("C:/Users/Robert/Documents/GitHub/Computer-Architecture/project3/assembly/");
-		m_fileparser.readFile("palindrome.s");
+		m_fileparser.setDirectory("C:/Users/Robert/Documents/GitHub/Computer-Architecture/project4/assembly/");
+		Compiler c = Compiler(m_fileparser.readFile("lab4b.s"));
+		c.compile();
 		Base_Machine* am = new GPR_Machine();
 		am->begin();
+	} else if (_arg0 == "switch") {
+		if (m_command.size() == 1) {
+			Base_Machine::setPipeline();
+		} else {
+			std::cout << input_invalid << std::endl;
+		}
 	} else if (_arg0 == "dir") {
 		if (m_command.size() == 2) {
 			m_fileparser.setDirectory(_arg1);

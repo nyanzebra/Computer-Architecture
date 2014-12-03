@@ -17,8 +17,19 @@ std::array<reg_t, 48> GPR_Machine::m_registers = { 0 };
 //
 void GPR_Machine::processInstruction() {
 	//fetch decode
+	m_scoreboard.writeBack();
+	m_scoreboard.execute();
+	m_scoreboard.readOperands();
+	m_scoreboard.fetchAssign(m_current_instruction);
+}
+
+void GPR_Machine::processRemainingInstructions() {
 	m_scoreboard.fetchAssign(m_current_instruction);
 	m_scoreboard.readOperands();
-	m_scoreboard.execute();
-	m_scoreboard.writeBack();
+	while (!m_scoreboard.getFUFloatAdd().isBufferEmpty() || !m_scoreboard.getFUFloatMult().isBufferEmpty()
+		|| !m_scoreboard.getFUInteger().isBufferEmpty() || !m_scoreboard.getFULoadStore().isBufferEmpty()) {
+		m_scoreboard.writeBack();
+		m_scoreboard.execute();
+		m_num_cycles++;
+	}
 }

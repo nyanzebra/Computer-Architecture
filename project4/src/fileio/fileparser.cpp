@@ -6,10 +6,10 @@
 #include "fileparser.h"
 #include "../machine/generalpurposeregistermachine.h"
 
-void FileParser::readFile(const std::string& filename) {
+std::vector<std::string>& FileParser::readFile(const std::string& filename) {
 	m_contents.clear();
 	if (filename.size() <= 0) { //obviously
-		return;
+		return std::vector<std::string>();
 	}
 
 	m_filename = m_directory + filename;//set path
@@ -21,6 +21,7 @@ void FileParser::readFile(const std::string& filename) {
 	}
 
 	input.close(); //close file
+	return m_contents;
 }
 
 void FileParser::printContents() const { //print file contents

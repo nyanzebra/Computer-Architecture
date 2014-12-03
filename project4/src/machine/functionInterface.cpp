@@ -6,10 +6,18 @@
 std::unordered_map<int, std::function<void(Instruction& instruction)>> umap_opcodeGroups;
 
 void executeFunction(Instruction& instruction) {
+	if (umap_opcodeGroups.size() < 2) {
+		initUMapOpcodeGroup();
+	}
+
 	umap_opcodeGroups[instruction.opcode](instruction);
 }
 
 //determine type
+const bool isFloatType(const int& op) {
+	return (op > 2 && op < 6 ? true : false);
+}
+
 const bool isRType(const int& op) {
 	return (op >= 0 && op < 10 ? true : false);
 }
@@ -30,23 +38,16 @@ const bool isLoading(const int& opcode) {
 	return ((opcode >= 0xC && opcode < 0xF) ? true : false);
 }
 
-//Breaks up the instruction into 4 different values and returns them in an array.
-const std::array<int, 4> getRType(const instruction_t& instr) {
-	std::array<int, 4> values;
-	values[0] = (instr & 0x03E00000) >> 21; //source reg1
-	values[1] = (instr & 0x001F0000) >> 16; //source reg2
-	values[2] = (instr & 0x0000F800) >> 11; //dest reg
-	values[3] = (instr & 0x000007C0) >> 6;  //shift value
-	return values;
+void fadd(Instruction& instruction) {
+	instruction.faluout = Logic<float>::add(instruction.fopA, instruction.fopB);
 }
 
-//Breaks up the instruction into 3 different values and returns them in an array.
-const std::array<int, 3> getIType(const instruction_t& instr) {
-	std::array<int, 3> values;
-	values[0] = (instr & 0x03E00000) >> 21; //source reg
-	values[1] = (instr & 0x001F0000) >> 16; //dest reg
-	values[2] = (instr & 0x0000FFFF);       //imm value
-	return values;
+void fsub(Instruction& instruction) {
+	instruction.faluout = Logic<float>::sub(instruction.fopA, instruction.fopB);
+}
+
+void fmult(Instruction& instruction) {
+	instruction.faluout = Logic<float>::mult(instruction.fopA, instruction.fopB);
 }
 
 void addR(Instruction& instruction) {
@@ -70,9 +71,17 @@ void loadByte(Instruction& instruction) {
 	instruction.aluout = Memory::loadData(Logic<int>::add(instruction.opA, instruction.offset));
 }
 
+void loadDouble(Instruction& instruction) {
+	instruction.faluout = (float) Memory::loadData(Logic<int>::add(instruction.opA, instruction.offset));
+}
+
+void storeDouble(Instruction& instruction) {
+	Memory::storeFData(Logic<int>::add(instruction.opA,instruction.offset), GPR_Machine::getReg(instruction.rs)+instruction.offset);
+}
+
 void insertNOP(Instruction& instruction) {
 	instruction.aluout = -1;
-	instruction.opcode = -1;
+	instruction.opcode = 31;
 	instruction.offset = -1;
 	instruction.opA = -1;
 	instruction.opB = -1;
@@ -98,7 +107,8 @@ void branchEqualZero(Instruction& instruction) {
 //then jumps if it is.
 void branchGreaterEqual(Instruction& instruction) {
 	if (instruction.opB >= instruction.opA) // checks if dest reg is greater or equal to source reg
-		Base_Machine::setPC(instruction.offset); //sets pc to immediate
+		Base_Machine::setPC(instruction.offset - 1); //sets pc to immediate
+	Scoreboard::setFURegister(instruction.rd, futype::isfree);
 	insertNOP(instruction);
 }
 ////breaks up the instruction into Itype values, then checks to see if the dest register is not equal to source register
@@ -112,9 +122,9 @@ void branchNotEqual(Instruction& instruction) {
 // Syscall has multiple different internal functions.
 // uses registers 29, 30, and 31. 29 is return value / parameter.
 void syscall(Instruction& instruction) {
-	if (instruction.aluout == 1) { //print out reg 30
+	if (GPR_Machine::getReg(29) == 1) { //print out reg 30
 		std::cout << GPR_Machine::getReg(30);
-	} else if (instruction.aluout == 8) { //get user input string
+	} else if (GPR_Machine::getReg(29) == 8) { //get user input string
 		std::string input;
 		std::cout << "> ";
 		std::getline(std::cin, input);
@@ -127,13 +137,13 @@ void syscall(Instruction& instruction) {
 			Memory::storeData(address, c);
 			address++;
 		}
-	} else if (instruction.aluout == 4) { //print string that is located in register 30
+	} else if (GPR_Machine::getReg(29) == 4) { //print string that is located in register 30
 		int address = GPR_Machine::getReg(30);
 		while (Memory::loadData(address)) {
 			std::cout << (char)Memory::loadData(address);
 			++address;
 		}
-	} else if (instruction.aluout == 10) {//exit
+	} else if (GPR_Machine::getReg(29) == 10) {//exit
 		// exit is handled already due to logic check in basemachine.cpp
 	}
 	insertNOP(instruction);
@@ -145,8 +155,9 @@ void initUMapOpcodeGroup() {
 	umap_opcodeGroups.insert({ 0x0, syscall });
 
 	umap_opcodeGroups.insert({ 0x2, addR });
-	//umap_opcodeGroups.insert({ 0x3, sub });
-
+	umap_opcodeGroups.insert({ 0x3, fadd });
+	umap_opcodeGroups.insert({ 0x4, fsub });
+	umap_opcodeGroups.insert({ 0x5, fmult });
 	//i
 	umap_opcodeGroups.insert({ 0xA, addI });
 	umap_opcodeGroups.insert({ 0xB, subI });
@@ -154,6 +165,8 @@ void initUMapOpcodeGroup() {
 	umap_opcodeGroups.insert({ 0xD, addI });
 	umap_opcodeGroups.insert({ 0xE, loadAscii });
 	umap_opcodeGroups.insert({ 0xF, loadByte });
+	umap_opcodeGroups.insert({ 0x10, loadDouble });
+	umap_opcodeGroups.insert({ 0x11, storeDouble });
 
 	umap_opcodeGroups.insert({ 0x1B, branchEqualZero });
 	umap_opcodeGroups.insert({ 0x1C, branchGreaterEqual });

@@ -98,6 +98,7 @@ const std::vector<std::string> Compiler::findInstructionAndOperand(const std::st
 void Compiler::storeData(const std::vector<std::string>& values) {
 
 	int d_offset = MIN_SEGMENT_DATA; //begin of data segment
+	int f_offset = MIN_SEGMENT_FLOAT;
 	for (auto it = values.begin(); it != values.end(); ++it) { //for all the data place them in memory correctly
 		//put in all aliases and size(induced by locations) in memory address container
 		m_umap_address.insert({ *it, d_offset });
@@ -125,6 +126,9 @@ void Compiler::storeData(const std::vector<std::string>& values) {
 		} else if (*it == ".space") {
 			++it;
 			d_offset += std::stoi(*it); // allocate free space
+		} else if (*it == ".double") {
+			++it;
+			Memory::storeFData(f_offset++, (float)(it->operator[](0))); //store floats if any
 		}
 	}
 }
@@ -178,35 +182,36 @@ void Compiler::storeInstruction(std::vector<std::string>& instructions) {
 	}
 
 	for (auto it = instructions.begin(); it != instructions.end(); ++it) { //li $5,45
+		instruction_t instr = { -1, -1, -1, -1, -1, -1, -1, -1 };
 		if (m_umap_ifunctions2param.find(*it) != m_umap_ifunctions2param.end()) {
-			instruction_t instr = m_umap_ifunctions2param.find(*it)->second << 26 | std::stoi(*(++it)) << 16; //concatenates instruction params			
-			if (m_umap_address.find(*(++it)) != m_umap_address.end()){ //add on hash value if it is string otherwise or whatever
-				instr |= m_umap_address.find(*it)->second;
-			} else {
-				instr |= std::stoi(*(it));
-			}
+			instr.opcode = m_umap_ifunctions2param.find(*it)->second;
+			instr.rt = std::stoi(*(++it)); //concatenates instruction params			
+			instr.offset = std::stoi(*(++it));
 			storeInstructionHelper(*it, instr);
 		} else if (m_umap_ifunctions3param.find(*it) != m_umap_ifunctions3param.end()) {
-			instruction_t instr = m_umap_ifunctions3param.find(*it)->second << 26 | std::stoi(*(++it)) << 16 | std::stoi(*(++it)) << 21; //concatenates instruction params
-			if (m_umap_address.find(*(++it)) != m_umap_address.end()){ //add on hash value if it is string otherwise or whatever
-				instr |= m_umap_address.find(*it)->second;
-			} else {
-				instr |= std::stoi(*(it));
-			}
+			instr.opcode = m_umap_ifunctions3param.find(*it)->second;
+			instr.rt = std::stoi(*(++it));
+			instr.rs = std::stoi(*(++it)); //concatenates instruction params
+			instr.offset = std::stoi(*(++it));
 			storeInstructionHelper(*it, instr);
 		} else if (m_umap_rfunctions.find(*it) != m_umap_rfunctions.end()) {
 			if (*it == "syscall") {
-				storeInstructionHelper(*it, m_umap_rfunctions.find(*it)->second << 26);
+				instr.opcode = m_umap_rfunctions.find(*it)->second;
+				storeInstructionHelper(*it, instr);
 			} else {
-				instruction_t instr = m_umap_rfunctions.find(*it)->second << 26 | std::stoi(*(++it)) << 11 | std::stoi(*(++it)) << 16 | std::stoi(*(++it)) << 21;
+				instr.opcode = m_umap_rfunctions.find(*it)->second;
+				instr.rd = std::stoi(*(++it));
+				instr.rt = std::stoi(*(++it));
+				instr.rs = std::stoi(*(++it));
 				storeInstructionHelper(*it, instr);
 			}
 		} else if (m_umap_jfunctions.find(*it) != m_umap_jfunctions.end()) {
 			if (*it == "nop") {
-				instruction_t instr = m_umap_jfunctions.find(*it)->second << 26;
+				instr.opcode = m_umap_jfunctions.find(*it)->second;
 				storeInstructionHelper(*it, instr);
 			} else {
-				instruction_t instr = m_umap_jfunctions.find(*it)->second << 26 | std::stoi(*(++it));
+				instr.opcode = m_umap_jfunctions.find(*it)->second;
+				instr.target = std::stoi(*(++it));
 				storeInstructionHelper(*it, instr);
 			}
 		}

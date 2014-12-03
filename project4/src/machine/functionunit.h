@@ -1,30 +1,25 @@
 #pragma once
 
+#include <list>
+
 #include "../utility/types.h"
 
 class FunctionUnit {
 public:
-	FunctionUnit() {}
+	FunctionUnit(const int& nstages, const futype& type) : m_nstages(nstages), m_type(type) {}
 	~FunctionUnit() {}
 
 	const bool& isBusy() const { return m_isBusy; }
 	const bool& isWritable() const { return m_isWritable; }
 	const bool& isExecutable() const { return m_isExecutable; }
+	const bool& isBufferEmpty() const { return (m_execute_instructions.size() > 0) ? false : true; }
 
 	const Instruction& getInstruction() const { return m_instruction; }
-	void setInstruction(const Instruction& instruction) { m_instruction = instruction; m_isBusy = true; }
+	void setInstruction(const Instruction& instruction) { m_instruction = instruction; }
 
-	const int& getOpcode() const { return m_opcode; }
+	const Instruction& getWritableInstruction() const { return m_execute_instructions.front(); }
 
-	const reg_t& getRS() const { return m_instruction.rs; }
-	const reg_t& getRT() const { return m_instruction.rt; }
-	const reg_t& getRD() const { return m_instruction.rd; }
-
-	const bool isRSEqualToFURD(const int& rs) const { return (rs == m_instruction.rd) ? true : false; }
-	const bool isRTEqualToFURD(const int& rt) const { return (rt == m_instruction.rd) ? true : false; }
-	const bool isRDEqualToFURD(const int& rd) const { return (rd == m_instruction.rd) ? true : false; }
-	const bool isRDEqualToFURS(const int& rd) const { return (rd == m_instruction.rs) ? true : false; }
-	const bool isRDEqualToFURT(const int& rd) const { return (rd == m_instruction.rt) ? true : false; }
+	const futype& getType() const { return m_type; }
 
 	void readOperands();
 
@@ -45,6 +40,12 @@ private:
 	bool m_isWritable = false;
 	bool m_isExecutable = false;
 
-	int m_opcode = 0;
+	//type
+	futype m_type;
+
+	int m_nstages = 0; //for execute or mem whatever
 	Instruction m_instruction;
+	Instruction m_readoperand_instruction;
+	std::list<Instruction> m_execute_instructions;
+	Instruction m_writeback_instruction;
 };

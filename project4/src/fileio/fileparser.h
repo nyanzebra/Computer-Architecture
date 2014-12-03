@@ -19,7 +19,7 @@ public:
 
 	//file handlers
 	void setDirectory(const std::string& dir) { m_directory = dir; }
-	void readFile(const std::string& filename);
+	std::vector<std::string>& readFile(const std::string& filename);
 	void printContents() const;
 
 	//has data

@@ -16,9 +16,6 @@ void Base_Machine::begin() {
 	m_nop_counter = 0;
 
 	while (m_program_counter < Memory::m_instruction_counter) {
-		if (m_program_counter == 10) {
-			int i = 0;
-		}
  		getNextInstruction();
 		processInstruction();
 		m_num_cycles++;

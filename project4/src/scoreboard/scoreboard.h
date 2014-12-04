@@ -32,6 +32,9 @@ public:
 	FunctionUnit& getFUFloatMult() { return m_floatMult; }
 	FunctionUnit& getFULoadStore() { return m_loadStore; }
 
+	static void clearExecution() { m_shouldClear = true; }
+	void emptyFUs() { m_integer.empty(); m_floatAdd.empty(); m_floatMult.empty(); m_loadStore.empty(); }
+
 	static const futype& getFURegister(const unsigned& place) { return m_furegisters[place]; }
 	static void setFURegister(const unsigned& place, const futype& fu) { m_furegisters[place] = fu; }
 
@@ -47,4 +50,5 @@ private:
 	FunctionUnit m_loadStore = FunctionUnit(2, futype::loadstore);
 	Instruction m_currentInstruction;
 	static std::array<futype, 48> m_furegisters;
+	static bool m_shouldClear;
 };

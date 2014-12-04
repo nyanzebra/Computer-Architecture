@@ -93,6 +93,7 @@ void insertNOP(Instruction& instruction) {
 //gets the immediate value from Jtype, then sets the pc to that address.
 void branch(Instruction& instruction) {
 	Base_Machine::setPC(instruction.offset);   //set pc to value(memory location)
+	Scoreboard::clearExecution();
 }
 
 //breaks up the instruction into Itype values, then checks to see if the source register is equal to 0, then jumps if it is.
@@ -100,6 +101,7 @@ void branchEqualZero(Instruction& instruction) {
 	if (instruction.opB == 0) { //checks to see if it is equal to 0
 		Base_Machine::setPC(instruction.offset); // sets pc to the immediate value
 	}
+	Scoreboard::clearExecution();
 	insertNOP(instruction);
 }
 
@@ -109,6 +111,7 @@ void branchGreaterEqual(Instruction& instruction) {
 	if (instruction.opB >= instruction.opA) // checks if dest reg is greater or equal to source reg
 		Base_Machine::setPC(instruction.offset - 1); //sets pc to immediate
 	Scoreboard::setFURegister(instruction.rd, futype::isfree);
+	Scoreboard::clearExecution();
 	insertNOP(instruction);
 }
 ////breaks up the instruction into Itype values, then checks to see if the dest register is not equal to source register
@@ -116,6 +119,7 @@ void branchGreaterEqual(Instruction& instruction) {
 void branchNotEqual(Instruction& instruction) {
 	if (instruction.opA != instruction.opB) //checks to see if dest reg != source reg
 		Base_Machine::setPC(instruction.offset); //set pc to the immediate
+	Scoreboard::clearExecution();
 	insertNOP(instruction);
 }
 

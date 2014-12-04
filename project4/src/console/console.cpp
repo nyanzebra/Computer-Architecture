@@ -96,8 +96,8 @@ void Console::parseInput() {
 			std::cout << input_invalid << need_file << std::endl; //if don't specify file
 		}
 	} else if (_arg0 == "test") {
-		m_fileparser.setDirectory("/home/robert/Documents/GitHub/Computer-Architecture/project4/assembly/");
-		Compiler c = Compiler(m_fileparser.readFile("lab4b.s"));
+		m_fileparser.setDirectory("C:/Users/Robert/Documents/GitHub/Computer-Architecture/project4/assembly/");
+		Compiler c = Compiler(m_fileparser.readFile("lab4a.s"));
 		c.compile();
 		Base_Machine* am = new GPR_Machine();
 		am->begin();

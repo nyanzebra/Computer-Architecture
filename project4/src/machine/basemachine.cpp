@@ -16,13 +16,13 @@ void Base_Machine::begin() {
 	m_nop_counter = 0;
 
 	while (m_program_counter < Memory::m_instruction_counter) {
-		getNextInstruction();
+ 		getNextInstruction();
 		processInstruction();
 		m_num_cycles++;
 	}
 	processRemainingInstructions();
 
-	std::cout << "\nNumber of Instructions: " << m_num_instructions << std::endl;
+	std::cout << "Number of Instructions: " << m_num_instructions << std::endl;
 	std::cout << "Number of Cycles: " << m_num_cycles << std::endl;
 	std::cout << "Number of nop's in code: " << m_nop_counter << std::endl;
 }

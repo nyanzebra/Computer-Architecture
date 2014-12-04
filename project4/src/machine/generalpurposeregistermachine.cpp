@@ -17,7 +17,6 @@ std::array<reg_t, 48> GPR_Machine::m_registers = { 0 };
 //
 void GPR_Machine::processInstruction() {
 	//fetch decode
-	m_registers[2];
 	m_scoreboard.writeBack();
 	m_scoreboard.execute();
 	m_scoreboard.readOperands();

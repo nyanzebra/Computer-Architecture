@@ -37,7 +37,6 @@ private:
 	std::vector<std::string> m_command; //vector of user input
 
 	FileParser m_fileparser; //handler for file io
-	Compiler m_compiler;
 
 	static bool m_continue; //determines whether console program should continue
 };

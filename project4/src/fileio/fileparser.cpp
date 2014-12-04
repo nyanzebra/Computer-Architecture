@@ -8,9 +8,6 @@
 
 std::vector<std::string>& FileParser::readFile(const std::string& filename) {
 	m_contents.clear();
-	if (filename.size() <= 0) { //obviously
-		return std::vector<std::string>();
-	}
 
 	m_filename = m_directory + filename;//set path
 

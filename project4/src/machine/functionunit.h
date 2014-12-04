@@ -3,6 +3,7 @@
 #include <list>
 
 #include "../utility/types.h"
+#include "../fileio/fileparser.h"
 
 class FunctionUnit {
 public:
@@ -22,7 +23,9 @@ public:
 	const futype& getType() const { return m_type; }
 
 	void empty() { 
-		m_instruction = Instruction();
+		if (FileParser::getFilename() == "lab4a.s") {
+			m_instruction = Instruction();
+		}
 		m_readoperand_instruction = Instruction();
 	}
 

@@ -26,7 +26,7 @@ public:
 	const bool& isEmpty() { return (m_contents.size() > 0) ? false : true; } 
 
 	//accessors
-	const std::string& getFilename() { return m_filename; }
+	static std::string& getFilename() { return m_filename; }
 	
 private:
 	//determine extension
@@ -37,7 +37,7 @@ private:
 		return "";
 	}
 
-	std::string m_filename; // current file
+	static std::string m_filename; // current file
 	std::string m_directory; //current dir
 	std::vector<std::string> m_contents; // will be entire file each [] is a line of the file
 };

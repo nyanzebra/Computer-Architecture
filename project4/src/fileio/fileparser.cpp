@@ -6,10 +6,11 @@
 #include "fileparser.h"
 #include "../machine/generalpurposeregistermachine.h"
 
+std::string FileParser::m_filename = "";
+
 std::vector<std::string>& FileParser::readFile(const std::string& filename) {
 	m_contents.clear();
-
-	m_filename = m_directory + filename;//set path
+	m_filename = filename;
 
 	std::ifstream input(m_directory + filename, std::ifstream::in);
 

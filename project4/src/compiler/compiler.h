@@ -8,7 +8,6 @@
 
 class Compiler {
 public:
-	Compiler() {}
 	~Compiler() {}
 
 	Compiler(std::vector<std::string> contents) : m_contents(contents) {

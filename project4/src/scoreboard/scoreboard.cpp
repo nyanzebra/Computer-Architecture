@@ -2,6 +2,7 @@
 #include "../machine/functionInterface.h"
 
 std::array<futype, 48> Scoreboard::m_furegisters = { futype::isfree };
+bool Scoreboard::m_shouldClear = false;
 
 const bool Scoreboard::isIntegerUnit(const int& opcode) {
 	return (!isFloatAddUnit(opcode) && !isFloatMultUnit(opcode) && !isLoadStoreUnit(opcode)) ? true : false;
@@ -128,6 +129,10 @@ void Scoreboard::fetchAssign(const instruction_t& instr) {
 		} else if (isLoadStoreUnit(m_currentInstruction.opcode)) {
 			setFunctionUnitLoadStore(m_currentInstruction);
 		}
+	}
+	if (m_shouldClear) {
+		emptyFUs();
+		m_shouldClear = false;
 	}
 }
 

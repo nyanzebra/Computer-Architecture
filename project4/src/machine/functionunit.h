@@ -21,6 +21,11 @@ public:
 
 	const futype& getType() const { return m_type; }
 
+	void empty() { 
+		m_instruction = Instruction();
+		m_readoperand_instruction = Instruction();
+	}
+
 	void readOperands();
 
 	//gets the opcode and then checks to see if it is in the map, then exectues the function if it is in the map.

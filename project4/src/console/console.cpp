@@ -97,7 +97,7 @@ void Console::parseInput() {
 		}
 	} else if (_arg0 == "test") {
 		m_fileparser.setDirectory("C:/Users/Robert/Documents/GitHub/Computer-Architecture/project4/assembly/");
-		Compiler c = Compiler(m_fileparser.readFile("lab4b.s"));
+		Compiler c = Compiler(m_fileparser.readFile("lab4a.s"));
 		c.compile();
 		Base_Machine* am = new GPR_Machine();
 		am->begin();
